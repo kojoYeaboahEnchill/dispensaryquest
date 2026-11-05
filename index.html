@@ -445,6 +445,28 @@ button{font:inherit;color:inherit;cursor:pointer}
 .mh b{font:800 20px var(--f-display)}
 .mrow[hidden]{display:none!important}
 .mrow{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--ink);padding:11px 8px;border-radius:12px;font:700 15px var(--f-body);text-align:left}
+.chcard{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);background:var(--surface-2);border-radius:16px;padding:14px;margin:12px 0}.chcard>div:first-child{flex:1;min-width:14em}.chcard b{font:800 17px var(--f-display)}.chcard small{display:block;color:var(--muted);margin-top:4px}.chcard .acts{display:flex;gap:6px;flex-wrap:wrap}
+.rushclock{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:30;background:#10201C;color:#fff;border-radius:999px;padding:8px 16px;font:800 18px var(--f-display);box-shadow:var(--shadow)}.rushclock span{font:600 14px var(--f-body);opacity:.8}.rushclock.low{background:#C0392B}.rushclock[hidden]{display:none}
+.rushbig{font:800 64px/1 var(--f-display);margin:8px 0;color:var(--accent)}
+.trx{background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:8px 12px;margin:8px 0}.trx small{display:block;color:var(--muted);font:700 11px var(--f-body);text-transform:uppercase;letter-spacing:.04em}.trx b{font:700 15px var(--f-body)}
+.trsteps{display:flex;gap:6px;list-style:none;margin:6px 0;padding:0;counter-reset:ts;flex-wrap:wrap}.trsteps li{counter-increment:ts;font:700 11.5px var(--f-body);color:var(--muted);background:var(--surface-2);border-radius:999px;padding:4px 9px}.trsteps li::before{content:counter(ts) ". "}.trsteps li.on{background:var(--accent);color:#fff}.trsteps li.done{color:var(--accent)}.trsteps li.done::before{content:"✓ "}
+.trstock{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trbot{display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:0;cursor:pointer;color:var(--ink)}
+.trbot .cap{width:46%;height:14px;border-radius:5px 5px 2px 2px;background:#E7ECEA;border:1px solid #B9C4C0}
+.trbot .lab{display:flex;flex-direction:column;gap:3px;width:100%;min-height:96px;box-sizing:border-box;border-radius:12px;padding:10px 8px;background:linear-gradient(180deg,#F7F9F8,#E3E9E7);border:1px solid #B9C4C0;text-align:center}
+.trbot .lab b{font:800 13px/1.2 var(--f-body)}.trbot .lab small{font:600 12px var(--f-mono);color:#7A5B12}
+.trbot:hover .lab,.trbot:focus-visible .lab{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.trsvg{width:100%;height:auto;display:block;touch-action:manipulation;border-radius:14px}.trsvg .tab{transition:transform .28s ease;cursor:pointer}
+.trcount{display:flex;align-items:baseline;gap:10px;margin:6px 2px}.trcount span{color:var(--muted);font:700 13px var(--f-body)}.trcount output{font:800 28px var(--f-display)}
+.trbtns{flex-wrap:wrap;gap:8px}
+.trmsg{border-radius:12px;padding:9px 12px;margin-top:10px;font:600 14px var(--f-body)}.trmsg.ok{background:#0D6B5B18;color:#0D6B5B}.trmsg.bad{background:#C0392B18;color:#A83228}
+.microw{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 2px}
+.micbtn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:999px;padding:9px 16px;font:800 15px var(--f-body);cursor:pointer}
+.micbtn svg{width:18px;height:18px}.micbtn.on{background:#C0392B;border-color:#C0392B;color:#fff;animation:micp 1s ease-in-out infinite}
+@keyframes micp{50%{box-shadow:0 0 0 8px rgba(192,57,43,.18)}}
+.micout{color:var(--muted);font-size:14px;flex:1;min-width:10em}.micout.bad{color:#C0392B}
+.bub small.said{display:block;margin-top:4px;opacity:.75;font-size:12.5px}
+[data-opt].maybe{outline:3px dashed var(--accent);outline-offset:2px}
 .mgfx{flex-wrap:wrap;cursor:default}.mrow.mgfx{display:grid;grid-template-columns:auto 1fr;column-gap:12px;row-gap:8px}.mgfx .gseg{grid-column:2;justify-self:start}.mgfx>span>small{display:block;font:500 12px var(--f-body);color:var(--muted);letter-spacing:0;margin-top:2px}
 .gseg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}.gseg button{border:0;background:none;color:var(--ink);font:700 13px var(--f-body);padding:7px 12px;cursor:pointer}.gseg button+button{border-left:1px solid var(--line)}.gseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
 .mrow:hover{background:var(--surface-2)}
@@ -637,6 +659,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       <button class="hbtn icon" id="btnPause" type="button" aria-label="Menu" title="Menu (Esc)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
   </header>
   <div class="toast" id="toast" role="status"></div>
+  <div class="rushclock" id="rushClock" hidden aria-live="off"></div>
   <button class="objective" id="objective" type="button" hidden title="Take me there"><span class="arr"><span id="objArrow" style="display:grid"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l5 10H3z" fill="currentColor"/><rect x="6.6" y="10" width="2.8" height="4.5" rx="1" fill="currentColor"/></svg></span></span><span class="t" id="objText"></span><span class="go">Go</span></button>
   <div class="ctlhint" id="ctlHint" hidden></div>
   <div class="crosshair" id="cross" hidden></div>
@@ -648,6 +671,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       <button class="mrow" id="btnFull" type="button" aria-pressed="false"><svg class="en" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="ex" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 1.5v4h-4M14.5 5.5h-4v-4M10.5 14.5v-4h4M1.5 10.5h4v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Full screen <small>F</small></span><span class="sw2" aria-hidden="true"><i></i></span></button>
       <button class="mrow" id="btnInside" type="button" aria-pressed="false" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8s2.6-5 7-5 7 5 7 5-2.6 5-7 5-7-5-7-5z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="8" r="2.2" fill="currentColor"/></svg><span>See inside every building</span><span class="sw2" aria-hidden="true"><i></i></span></button>
       <div class="mrow mgfx" role="group" aria-label="Graphics quality"><span class="mi">◐</span><span>Graphics <small id="gfxInfo"></small></span><span class="gseg"><button type="button" data-gfx="auto">Auto</button><button type="button" data-gfx="high">High</button><button type="button" data-gfx="low">Low</button></span></div>
+      <div class="mrow mgfx" role="group" aria-label="Voices"><span class="mi">🗣</span><span>Voices <small id="voxInfo"></small></span><span class="gseg"><button type="button" data-act="voxtest">▶ Test voices</button></span></div>
       <div class="msep"></div>
       <button class="mrow" type="button" data-act="mhowto"><span class="mi">?</span><span>How to play</span></button>
       <button class="mrow" type="button" data-act="creator"><span class="mi">☺</span><span>Change character</span></button>
@@ -7580,6 +7604,67 @@ const rxShort=n=>n.replace(/\s*\(.*?\)\s*/g," ").replace(/\s+/g," ").trim();
 const rxLabel=s=>s.split(" — ")[0];
 const rxUnits=id=>UNITS.filter(u=>(UNIT_RX[u.n]||[]).includes(id));
 /* every scenario's final lesson gains a short "medicine check" (mechanism and side-effect questions), and one learn card sums up its medicines */
+/* ---------- hands-on dispensing: pick the stock, count on the tray, pack, label ---------- */
+const TRAYS={
+ c1:{type:"tray",at:"st:prep",who:"Abena Ofori",rx:"Amoxicillin 500 mg capsules · one capsule three times a day for 5 days",q:"Dispense Abena's amoxicillin.",qty:15,form:"cap",col:["#B8322B","#F2C230"],hint:"1 × 3 × 5",
+  stock:[["Amoxicillin 500 mg capsules","Exp 11/2027",1],["Amoxicillin 250 mg capsules","Exp 04/2028",0,"Wrong strength: the prescription says 500 mg."],["Amoxicillin 500 mg capsules","Exp 09/2026",0,"Expired: always check the date before you dispense."]],
+  pack:[["Amber bottle, child-resistant cap",1],["Paper envelope",0,"Capsules soften in damp air. Use a closed container."],["Clear plastic bag",0,"No protection from light, moisture or children."]],
+  label:[["Take ONE capsule THREE times a day for 5 days. Finish the course.",1],["1 cap tds × 5/7",0,"No abbreviations. Patients must understand the label."],["Take as directed.",0,"Too vague. Write the dose, how often and for how long."]],
+  why:"Right drug and strength, in date; count 15 on a clean tray; closed amber bottle; plain-language label."},
+ u16b:{type:"tray",at:"col:station",rx:"Amlodipine 5 mg tablets · one tablet every morning for 30 days",q:"Dispense the amlodipine.",qty:30,form:"tab",col:["#F4F2EC"],hint:"1 × 1 × 30",
+  stock:[["Amlodipine 5 mg tablets","Exp 02/2028",1],["Amlodipine 10 mg tablets","Exp 02/2028",0,"Wrong strength: 10 mg is double the dose."],["Amitriptyline 25 mg tablets","Exp 05/2028",0,"Look-alike name! Amitriptyline is an antidepressant. Read the whole name."]],
+  pack:[["Amber bottle, child-resistant cap",1],["Paper envelope",0,"Thirty tablets for a month need a sturdy closed container."],["Loose in a pocket",0,"Never hand over loose tablets."]],
+  label:[["Take ONE tablet every morning for blood pressure. Do not stop unless your doctor says so.",1],["Take one tablet at night to help you sleep.",0,"That is an amitriptyline label, not amlodipine."],["1 tab od",0,"No abbreviations. Patients must understand the label."]],
+  why:"Amlodipine 5 mg (not 10 mg, not amitriptyline); 30 tablets; amber bottle; clear once-daily label."},
+ u28a:{type:"tray",at:"col:station",who:"Auntie Grace",rx:"Metformin 500 mg tablets · one tablet twice a day with meals for 30 days",q:"Dispense Grace's metformin.",qty:60,form:"oval",col:["#FFFFFF"],hint:"1 × 2 × 30",
+  stock:[["Metformin 500 mg tablets","Exp 06/2028",1],["Metronidazole 400 mg tablets","Exp 06/2028",0,"Look-alike name! Metronidazole is an antibiotic."],["Metformin 500 mg tablets","Exp 07/2026",0,"Expired: always check the date before you dispense."]],
+  pack:[["Amber bottle, child-resistant cap",1],["Paper envelope",0,"Sixty tablets for a month need a sturdy closed container."],["Clear plastic bag",0,"No protection from light, moisture or children."]],
+  label:[["Take ONE tablet TWICE a day with breakfast and supper.",1],["Take ONE tablet TWICE a day on an empty stomach.",0,"Metformin is taken with food. It upsets the stomach less."],["1 tab bd pc",0,"No abbreviations. Patients must understand the label."]],
+  why:"Metformin 500 mg (not metronidazole), in date; 60 tablets; amber bottle; take with meals."},
+ u15b:{type:"tray",at:"col:station",rx:"Omeprazole 20 mg capsules · one capsule each morning before breakfast for 28 days",q:"Dispense the omeprazole.",qty:28,form:"cap",col:["#C8798B","#7A4A3A"],hint:"1 × 1 × 28",
+  stock:[["Omeprazole 20 mg capsules","Exp 10/2027",1],["Omeprazole 40 mg capsules","Exp 10/2027",0,"Wrong strength: the prescription says 20 mg."],["Ondansetron 4 mg tablets","Exp 01/2028",0,"Wrong drug. Both start with 'O'. Read the whole name."]],
+  pack:[["Amber bottle, child-resistant cap",1],["Paper envelope",0,"Omeprazole is damaged by damp. Keep it in a closed container."],["Clear plastic bag",0,"No protection from light, moisture or children."]],
+  label:[["Take ONE capsule each morning, 30 minutes before breakfast. Swallow it whole.",1],["Take one capsule after meals and chew it.",0,"Omeprazole works best before food, and chewing destroys the capsule's coating."],["1 cap od ac",0,"No abbreviations. Patients must understand the label."]],
+  why:"Omeprazole 20 mg, in date; 28 capsules; closed amber bottle; before breakfast, swallowed whole."}
+};
+Object.entries(TRAYS).forEach(([lid,t])=>{ const L=LESSONS[lid]; if(L&&L.beats) L.beats.push(t); });
+const TR_TRAY={x0:16,x1:224,y0:16,y1:184}, TR_SLOT=j=>({x:258+(j%5)*11,y:184-Math.floor(j/5)*10.6});
+function trSeed(n){ let x=n*7919+12345; return ()=>(x=(x*9301+49297)%233280)/233280; }
+function trTab(b,k,x,y){ const c=b.col; if(b.form==="cap") return `<g class="tab" data-tk="${k}" style="transform:translate(${x}px,${y}px)"><g transform="rotate(${(k*47)%180})"><rect x="-6.5" y="-3" width="6.5" height="6" rx="3" fill="${c[0]}"/><rect x="0" y="-3" width="6.5" height="6" rx="3" fill="${c[1]||c[0]}"/><rect x="-5.5" y="-2.3" width="11" height="1.4" rx=".7" fill="#fff" opacity=".35"/></g></g>`;
+  if(b.form==="oval") return `<g class="tab" data-tk="${k}" style="transform:translate(${x}px,${y}px)"><g transform="rotate(${(k*47)%180})"><ellipse rx="6.2" ry="3.6" fill="${c[0]}" stroke="#C9C6BC" stroke-width=".8"/><line x1="-3.5" x2="3.5" y1="0" y2="0" stroke="#C9C6BC" stroke-width=".8"/></g></g>`;
+  return `<g class="tab" data-tk="${k}" style="transform:translate(${x}px,${y}px)"><circle r="4.6" fill="${c[0]}" stroke="#CFCBC0" stroke-width=".8"/><circle r="2.2" cx="-1.2" cy="-1.3" fill="#fff" opacity=".5"/></g>`; }
+function renderTray(){ const b=G.m.beats[G.b]; if(!G.tr){ const r=trSeed(G.b+b.qty), N=Math.min(150,b.qty+14), pos=[]; for(let k=0;k<N;k++) pos.push([TR_TRAY.x0+r()*(TR_TRAY.x1-TR_TRAY.x0),TR_TRAY.y0+r()*(TR_TRAY.y1-TR_TRAY.y0)]); G.tr={st:0,mis:0,msg:"",pos,ch:[],N}; }
+  const T=G.tr, stages=["Choose the stock","Count on the tray","Choose the container","Write the label"];
+  let h=`<div class="card-h"><span class="chip">Dispensing</span>${placeChip(b)}${canHint()?`<button type="button" class="rxbtn" data-act="hint" aria-pressed="${G.hint}">${SVG_BULB} Hint</button>`:""}</div>
+   <div class="trx"><small>Prescription${b.who?" · "+esc(b.who):""}</small><b>${esc(b.rx)}</b></div>
+   <ol class="trsteps">${stages.map((s,i)=>`<li class="${i<T.st?"done":i===T.st?"on":""}">${s}</li>`).join("")}</ol>`;
+  if(G.hint&&T.st===1) h+=hintBox({hint:"Work out the quantity first: "+b.hint+". Sweep in fives, then count the last few one by one."});
+  if(T.st===0) h+=`<p class="q">Pick the right stock bottle. Check the name, the strength and the expiry date.</p><div class="trstock">${b.stock.map((s,i)=>`<button type="button" class="trbot" data-tr="s:${i}"><span class="cap"></span><span class="lab"><b>${esc(s[0])}</b><small>${esc(s[1])}</small></span></button>`).join("")}</div>`;
+  if(T.st===1) h+=`<p class="q">Count the right number into the channel with the spatula. Tap a tablet to move one, or sweep five at a time.</p>
+   <svg class="trsvg" viewBox="0 0 320 200" role="img" aria-label="Counting tray"><rect x="4" y="4" width="312" height="192" rx="14" fill="#E9EEEC" stroke="#B9C4C0"/><rect x="246" y="10" width="64" height="180" rx="10" fill="#D7DFDC" stroke="#AEBBB6"/><text x="278" y="24" text-anchor="middle" font-size="9" fill="#66736F" font-weight="700">CHANNEL</text>
+   ${T.pos.map((p,k)=>{ const j=T.ch.indexOf(k); const q=j>=0?TR_SLOT(j):{x:p[0],y:p[1]}; return trTab(b,k,q.x.toFixed(1),q.y.toFixed(1)); }).join("")}</svg>
+   <div class="trcount"><span>In the channel</span><output id="trN">${T.ch.length}</output></div>
+   <div class="row trbtns"><button class="btn ghost sm" type="button" data-tr="ret">◂ Return 1</button><button class="btn sm" type="button" data-tr="sweep">Sweep 5 ▸</button><span class="grow"></span><button class="btn gold" type="button" data-tr="pour">Pour into container ✓</button></div>`;
+  if(T.st===2) h+=`<p class="q">${b.qty} counted. What will you put them in?</p><div class="tiles">${b.pack.map((s,i)=>`<button type="button" class="tile" data-tr="p:${i}">${esc(s[0])}</button>`).join("")}</div>`;
+  if(T.st===3) h+=`<p class="q">Choose the label directions.</p><div class="tiles">${b.label.map((s,i)=>`<button type="button" class="tile" data-tr="l:${i}">${esc(s[0])}</button>`).join("")}</div>`;
+  if(T.msg) h+=`<div class="trmsg ${T.msgOk?"ok":"bad"}">${T.msg}</div>`;
+  card.innerHTML=h; card.hidden=false; }
+function trMove(k,to){ const el=card.querySelector(`.tab[data-tk="${k}"]`); if(el) el.style.transform=`translate(${to.x.toFixed(1)}px,${to.y.toFixed(1)}px)`; }
+function trUpd(){ const o=$("#trN"); if(o) o.textContent=G.tr.ch.length; }
+function trAct(v){ const b=G.m.beats[G.b], T=G.tr; if(!T||G.ans) return;
+  const miss=m=>{ T.mis++; T.msg=m; T.msgOk=false; sfx("bad"); };
+  if(v==="sweep"||v==="ret"||v.startsWith("t:")){
+    if(v==="sweep"){ const free=T.pos.map((p,k)=>k).filter(k=>!T.ch.includes(k)).sort((a,c)=>T.pos[c][0]-T.pos[a][0]).slice(0,5); free.forEach(k=>{ T.ch.push(k); trMove(k,TR_SLOT(T.ch.length-1)); }); sfx("click"); }
+    else if(v==="ret"){ const k=T.ch.pop(); if(k!=null){ trMove(k,{x:T.pos[k][0],y:T.pos[k][1]}); sfx("click"); } }
+    else { const k=+v.slice(2), j=T.ch.indexOf(k); if(j>=0){ T.ch.splice(j,1); trMove(k,{x:T.pos[k][0],y:T.pos[k][1]}); T.ch.forEach((kk,jj)=>trMove(kk,TR_SLOT(jj))); } else { T.ch.push(k); trMove(k,TR_SLOT(T.ch.length-1)); } sfx("click"); }
+    trUpd(); return; }
+  if(v==="pour"){ const n=T.ch.length; if(n===b.qty){ T.st=2; T.msg=`${n} counted. That's right.`; T.msgOk=true; sfx("ok"); } else miss(n<b.qty?`You have ${n}. That's too few for this prescription. Work out the total and keep counting.`:`You have ${n}. That's too many. Return the extras to the stock bottle.`); return renderTray(); }
+  const [k,i]=[v[0],+v.slice(2)];
+  if(k==="s"){ const s=b.stock[i]; if(s[2]){ T.st=1; T.msg=`${esc(s[0])}, ${esc(s[1])}. Correct name, strength and date.`; T.msgOk=true; sfx("ok"); } else miss(esc(s[3])); return renderTray(); }
+  if(k==="p"){ const s=b.pack[i]; if(s[1]){ T.st=3; T.msg="Good container."; T.msgOk=true; sfx("ok"); } else miss(esc(s[2])); return renderTray(); }
+  if(k==="l"){ const s=b.label[i]; if(!s[1]){ miss(esc(s[2])); return renderTray(); }
+    G.ans={sel:[]}; const m=T.mis; judge(m===0?"good":m<=2?"part":"bad",m===0?"Dispensed without a mistake.":`${m} slip${m>1?"s":""} along the way.`); } }
+
 (function addMedicineChecks(){
   const seed=n=>{ let x=n*9301+49297; return ()=>(x=(x*9301+49297)%233280)/233280; };
   const all=Object.keys(DRUGS);
@@ -7870,6 +7955,72 @@ const SVG_SPK='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v1
 const SVG_BULB='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5a4.5 4.5 0 0 0-2.6 8.2V12h5.2V9.7A4.5 4.5 0 0 0 8 1.5z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 14h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
 const SVG_ARROW='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l5 10H3z" fill="currentColor"/><rect x="6.6" y="10" width="2.8" height="4.5" rx="1" fill="currentColor"/></svg>';
 const canSpeak=!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);
+/* ---------- voices: the most natural voice each phone has, a fixed voice per character ---------- */
+const VOX=(()=>{ const S=window.speechSynthesis; let VO=[], ready=false, q=[], cur=null, gen=0;
+  const NOVELTY=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Grandma|Grandpa|Rocko|Shelley|Flo\b|Eddy|Reed|Sandy|Novelty/i;
+  const FEM=/female|woman|Samantha|Karen|Moira|Tessa|Fiona|Victoria|Allison|Ava\b|Susan|Serena|Kate\b|Martha|Catherine|Zira|Hazel|Libby|Sonia|Ezinne|Asilia|Leah|Luna|Aria|Jenny|Michelle|Emma|Natasha|Clara|Joanna|Salli|Kimberly|Ivy|Amy|Nicole|Olivia|Imani|Zuri|Esi|Abena|Ama\b|Akua|Ngozi|Chinenye|Isla|Maisie|Sienna|Ellie|Abbi|Bella|Hollie|Mia\b|Nora|Shelby|Stephanie|Matilda|Jessa|Zoe|Annette|Siri Female/i;
+  const MAL=/\bmale|\bman\b|Daniel|Alex\b|Tom\b|Aaron|Arthur|Oliver|Rishi|Gordon|Lee\b|David|Mark\b|George|Ryan|Thomas|Abeo|Elimu|Luke|Guy\b|Eric|Christopher|Andrew|Brian|Davis|Jason|Tony|William|Liam|Kwame|Kofi|Yaw|Ethan|Noah|Elliot|Alfie|Ollie|Siri Male/i;
+  const score=v=>{ const n=v.name||"", l=(v.lang||"").replace("_","-").toLowerCase(); if(!/^en/.test(l)) return -1e3; let s=0;
+    if(/Natural|Neural/i.test(n)) s+=60; if(/Premium/i.test(n)) s+=55; if(/Enhanced/i.test(n)) s+=45; if(/Google/i.test(n)) s+=30; if(/Siri/i.test(n)) s+=28; if(/network/i.test(n)) s+=12;
+    if(/en-gh/.test(l)) s+=30; else if(/en-ng/.test(l)) s+=26; else if(/en-(ke|tz|za)/.test(l)) s+=18; else if(/en-gb/.test(l)) s+=9; else if(/en-(ie|au|in)/.test(l)) s+=5; else if(/en-us/.test(l)) s+=4;
+    if(NOVELTY.test(n)) s-=200; if(v.localService===false) s+=3; return s; };
+  const sexOf=v=>FEM.test(v.name)?"f":MAL.test(v.name)?"m":"?";
+  function load(){ try{ VO=(S.getVoices()||[]).filter(v=>score(v)>-500).map(v=>({v,s:score(v),x:sexOf(v)})).sort((a,b)=>b.s-a.s); ready=VO.length>0; }catch(e){ VO=[]; } }
+  if(S){ load(); try{ S.addEventListener?S.addEventListener("voiceschanged",load):(S.onvoiceschanged=load); }catch(e){} }
+  const hash=s=>{ let h=2166136261; for(const c of String(s)) h=Math.imul(h^c.charCodeAt(0),16777619); return h>>>0; };
+  function sexOfWho(who){ if(who==="player"){ const L=SAVE&&SAVE.player&&SAVE.player.look; return L&&(L.skirt||["braids","puffs","wrap"].includes(L.hair))?"f":"m"; }
+    const n=(typeof NPCS!=="undefined"&&NPCS[who])||(typeof PEOPLE!=="undefined"&&PEOPLE[who])||null; if(!n) return "f";
+    if(/^(Mr|Dr\.? Kw|Uncle|Papa|Master|Opanyin)\b/.test(n.short||n.name)) return "m"; if(/^(Mrs|Ms|Miss|Madam|Auntie|Maame|Sister|Mama|Nana Ama)\b/.test(n.short||n.name)) return "f";
+    const L=n.look||{}; return (L.skirt||["braids","puffs","wrap"].includes(L.hair))?"f":"m"; }
+  const PREF={};
+  function pick(who){ if(!ready) load(); if(!VO.length) return null; if(PREF[who]) return PREF[who];
+    const sx=who?sexOfWho(who):"f", best=VO[0].s; const top=VO.filter(o=>o.s>=best-12);
+    let pool=top.filter(o=>o.x===sx); let shift=0;
+    if(!pool.length){ const m=VO.filter(o=>o.x===sx); if(m.length){ const b2=m[0].s; pool=m.filter(o=>o.s>=b2-12); } }
+    if(!pool.length){ pool=top.filter(o=>o.x==="?"); shift=sx==="m"?-1:1; }
+    if(!pool.length){ pool=top; shift=sx==="m"?-1:1; }
+    const h=hash(who||"narrator"), o=pool[h%pool.length];
+    const pitchBase=shift<0?0.82:shift>0?1.1:1, jit=((h>>8)%9-4)*0.02;
+    return PREF[who]={v:o.v, pitch:Math.max(0.5,Math.min(1.6,pitchBase+(who?jit:0))), rate:who==="player"?1.0:0.94+((h>>12)%5)*0.015, sx}; }
+  const clean=t=>String(t||"").replace(/<[^>]+>/g," ").replace(/\[\[([^|\]]+)(\|[^\]]+)?\]\]/g,"$1").replace(/&nbsp;|&amp;/g," ").replace(/\b(\d+)\s?mg\b/g,"$1 milligrams").replace(/\b(\d+)\s?mL\b/gi,"$1 millilitres").replace(/\b(\d+)\s?kg\b/g,"$1 kilograms").replace(/°C/g," degrees").replace(/\s+/g," ").trim();
+  const chunks=t=>{ const out=[]; const parts=clean(t).replace(/([.!?])\s+/g,"$1\u0001").split("\u0001"); parts.forEach(p=>{ while(p.length>180){ const k=p.lastIndexOf(",",180); const c=k>60?k+1:180; out.push(p.slice(0,c)); p=p.slice(c).trim(); } if(p) out.push(p); }); return out; };
+  function next(){ if(!q.length){ cur=null; if(VOX.onIdle) VOX.onIdle(); return; } const it=q.shift(), my=gen; cur=it;
+    const u=new SpeechSynthesisUtterance(it.text); const P=pick(it.who); if(P){ u.voice=P.v; u.lang=P.v.lang; u.pitch=P.pitch; u.rate=P.rate; } else { u.lang="en-GB"; u.rate=0.95; }
+    u.onstart=()=>{ if(my===gen&&VOX.onSay) VOX.onSay(it.who); }; const done=()=>{ if(my!==gen) return; if(VOX.onEnd) VOX.onEnd(it.who); next(); }; u.onend=done; u.onerror=done;
+    try{ S.speak(u); }catch(e){ done(); } }
+  return { ok:!!(S&&window.SpeechSynthesisUtterance),
+    say(lines,opts){ if(!S) return; opts=opts||{}; if(!opts.queue) this.stop(); const L=Array.isArray(lines)?lines:[[lines,opts.who]]; L.forEach(([t,w])=>chunks(t).forEach(c=>q.push({text:c,who:w||null}))); if(!cur) next(); },
+    stop(){ gen++; q=[]; cur=null; try{ S.cancel(); }catch(e){} if(VOX.onEnd) VOX.onEnd(null); },
+    busy:()=>!!cur, voiceFor:w=>{ const P=pick(w); return P?P.v.name:"(default voice)"; }, best:()=>VO[0]?VO[0].s:-1, count:()=>VO.length, reset(){ Object.keys(PREF).forEach(k=>delete PREF[k]); load(); } };
+})();
+
+VOX.onSay=w=>{ if(three&&three.talking) three.talking(w&&w!=="player"?(NPCS[w]?w:"pt"):null); };
+VOX.onEnd=()=>{ if(three&&three.talking) three.talking(null); };
+/* students can answer counselling questions out loud */
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition||null; let MIC=null;
+const NUMW={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,fifteen:15,twenty:20,thirty:30,forty:40,fifty:50,hundred:100,once:1,twice:2,first:1,second:2,third:3};
+const STOPW=new Set("a an the and or to of in on at for with is are be been it its this that these those you your i my me we us he she him her they them do does did so if then than as by from but can will just would should could there here what which who when where how about up out into over very really also please okay ok right well um uh er like".split(" "));
+const sayToks=t=>String(t).toLowerCase().replace(/<[^>]+>/g," ").replace(/n't\b/g," not").replace(/[^a-z0-9 ]/g," ").split(/\s+/).map(w=>NUMW[w]!=null?String(NUMW[w]):w).filter(w=>w&&!STOPW.has(w)).map(w=>w.length>5?w.slice(0,5):w);
+function matchSaid(said,opts){ const T=sayToks(said); if(!T.length) return {i:-1,sc:[]}; const ts=new Set(T);
+  const sc=opts.map(o=>{ const O=[...new Set(sayToks(o.t))]; if(!O.length) return 0; const hit=O.filter(w=>ts.has(w)).length; const neg=(ts.has("not")||ts.has("no")||ts.has("stop"))!==(O.includes("not")||O.includes("no")||O.includes("stop"));
+    const r=hit/O.length, p=hit/ts.size; const f=r+p?2*r*p/(r+p):0; return Math.max(0,f-(neg?0.15:0)); });
+  const ord=sc.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]); const ok=ord[0][0]>=0.2&&(ord.length<2||ord[0][0]-ord[1][0]>=0.06); return {i:ok?ord[0][1]:-1,sc,top:ord.slice(0,2).map(x=>x[1])}; }
+function micMsg(t,cls){ const el=$("#micOut"); if(el){ el.innerHTML=t; el.className="micout"+(cls?" "+cls:""); } }
+function micStart(){ const b=G&&G.m&&G.m.beats[G.b]; if(!SRC||!b||G.ans) return; if(MIC){ try{ MIC.abort(); }catch(e){} MIC=null; return; } VOX.stop();
+  let r; try{ r=new SRC(); }catch(e){ micMsg("The microphone isn't available here.","bad"); return; } MIC=r; const lg=(navigator.language||"").toLowerCase(); r.lang=/^en-(gh|ng|gb|ke|za)/.test(lg)?navigator.language:"en-GB"; r.interimResults=true; r.maxAlternatives=3; r.continuous=false;
+  const btn=$("#micBtn"); if(btn){ btn.classList.add("on"); btn.setAttribute("aria-pressed","true"); } micMsg("Listening… say your answer to the patient.");
+  let final="";
+  r.onresult=e=>{ let txt=""; for(let k=e.resultIndex;k<e.results.length;k++){ const res=e.results[k]; txt+=res[0].transcript; if(res.isFinal) final+=res[0].transcript; } micMsg("“"+esc(txt.trim())+"”"); };
+  r.onerror=e=>{ const m={"not-allowed":"The microphone is blocked. Allow it for this site in your browser settings, then try again.","service-not-allowed":"Speech recognition is switched off on this phone (on iPhone, turn on Dictation or Siri).","no-speech":"I didn't hear anything. Tap the microphone and try again.","audio-capture":"No microphone was found.","network":"Speech recognition needs an internet connection."}[e.error]||"Something went wrong with the microphone. Try again, or tap an answer."; micMsg(m,"bad"); };
+  r.onend=()=>{ MIC=null; const bt=$("#micBtn"); if(bt){ bt.classList.remove("on"); bt.setAttribute("aria-pressed","false"); } if(!final.trim()) return; const bb=G&&G.m&&G.m.beats[G.b]; if(!bb||G.ans||bb!==b) return;
+    const m=matchSaid(final,b.opts); if(m.i<0){ micMsg("I heard “"+esc(final.trim())+"”. That doesn't clearly match an answer. Try again, or tap the answer you meant.","bad"); (m.top||[]).forEach(i=>{ const t=card.querySelectorAll("[data-opt]")[i]; if(t) t.classList.add("maybe"); }); return; }
+    G.said=final.trim(); answerPick(m.i); };
+  try{ r.start(); }catch(e){ MIC=null; micMsg("The microphone couldn't start. Tap an answer instead.","bad"); } }
+/* the patient speaks their line, then replies to what you said, and reacts with their head */
+function talkFX(b){ if(!b||!b.talk) return; const key=(G.lid||"")+"|"+G.b+"|"+(G.ans?"a":"q"); if(G._vk===key) return; G._vk=key;
+  if(G.ans){ const o=b.opts[G.ans.sel[0]]; if(three&&three.react) three.react(NPCS[b.talk]?b.talk:"pt",G.ans.res==="good"?"nod":G.ans.res==="part"?"tilt":"shake");
+    if(SAVE.sound&&VOX.ok){ const L=[]; if(!G.ans.said) L.push([o.t,"player"]); if(o.re) L.push([o.re,b.talk]); if(L.length) VOX.say(L); } }
+  else if(SAVE.sound&&VOX.ok) VOX.say(b.q,{who:b.talk}); }
 let AC=null;
 let NOISE=null;
 function symSound(k,dur){ if(!SAVE.sound) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume(); const t=AC.currentTime;
@@ -7889,8 +8040,8 @@ function breathLoop(){ clearInterval(breathTimer); breathTimer=setInterval(()=>{
 function sfx(k){ if(!SAVE.sound) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume();
   const seq={ok:[[660,.08],[990,.12]],bad:[[220,.2]],click:[[880,.03]],xp:[[1320,.05],[1760,.07]],level:[[523,.1],[659,.1],[784,.1],[1047,.24]],talk:[[440,.05],[560,.05]],win:[[523,.1],[784,.1],[1047,.2]]}[k]||[]; let t=AC.currentTime;
   seq.forEach(([f,d])=>{ const o=AC.createOscillator(), g=AC.createGain(); o.type=k==="bad"?"sawtooth":"triangle"; o.frequency.value=f; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(k==="bad"?0.06:0.11,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+d+0.03); t+=d*0.9; }); }catch(e){} }
-function speak(text){ if(!canSpeak) return; try{ const s=window.speechSynthesis; s.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,"").replace(/\[\[([^|\]]+)(\|[^\]]+)?\]\]/g,"$1")); u.lang="en-GB"; u.rate=0.95; s.speak(u); }catch(e){} }
-function hush(){ try{ if(canSpeak) window.speechSynthesis.cancel(); }catch(e){} }
+function speak(text,who){ if(!canSpeak) return; VOX.say(String(text),{who:who||null}); }
+function hush(){ try{ if(MIC){ MIC.abort(); MIC=null; } }catch(e){} if(canSpeak) VOX.stop(); }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function gl(text){ return text.replace(/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/g,(m,shown,term)=>{ const k=term||shown; return GLOSS[k]?`<button type="button" class="gl" data-gl="${esc(k)}">${shown}</button>`:shown; }); }
 function initials(n){ return n.replace(/^(Pharm\.|Mrs|Mr|Ms|Sister|Dr)\s+/g,"").split(/\s+/).map(w=>w[0]).slice(0,2).join(""); }
@@ -7986,7 +8137,7 @@ function showJourney(year){
   screen.innerHTML=`<div class="panel journey">
     <div class="logo"><div class="mk brand"><img src="${DQ_MARK}" alt="" width="52" height="52"></div><h1>Your journey</h1><div class="tot"><span>${r.name}</span> · ${SAVE.xp} XP</div></div>
     ${rankBar()}
-    <div class="tabs" role="group" aria-label="Year">${[1,2,3].map(y=>`<button type="button" data-year="${y}" aria-pressed="${y===year}">Year ${y}</button>`).join("")}<button type="button" data-act="passport">Subject passport</button><button type="button" data-act="formulary">℞ Formulary</button><button type="button" data-act="hormones">Hormones</button></div>
+    <div class="tabs" role="group" aria-label="Year">${[1,2,3].map(y=>`<button type="button" data-year="${y}" aria-pressed="${y===year}">Year ${y}</button>`).join("")}<button type="button" data-act="passport">Subject passport</button><button type="button" data-act="formulary">℞ Formulary</button><button type="button" data-act="hormones">Hormones</button><button type="button" data-act="challenges">⚡ Challenges</button></div>
     <div class="units">${UNITS.filter(u=>u.y===year).map(u=>{ const S=unitStats(u), built=S.n>0;
       return `<button type="button" class="ucard ${built?"":"soon"} ${nu===u?"next":""}" ${built?`data-unit="${u.n}"`:"disabled"}><span class="un">UNIT ${u.n}${nu===u?" · NEXT":""}</span><b>${u.t}</b><span class="d">${u.s}</span>${built?`<span class="prog"><i style="width:${S.done/S.n*100}%"></i></span><span class="meta">${S.done}/${S.n} lessons · ${S.stars}/${S.n*3} stars</span>`:`<span class="meta">Coming in a later update</span>`}</button>`; }).join("")}</div>
     <div class="foot"><button class="btn" type="button" data-act="toworld">Back to the world</button><button class="btn ghost" type="button" data-act="creator">Change character</button><button class="btn ghost" type="button" data-act="title">Title screen</button></div></div>`;
@@ -8058,7 +8209,7 @@ function openNpc(id,all){
   card.innerHTML=`<div class="dlg-h">${avatar(n)}<div><b>${n.name}</b><small>${n.role}</small></div><button type="button" class="x" data-act="closecard" aria-label="Close">×</button></div>
     <p class="say">${n.hello()}</p>${ls.length?`<div class="lrows">${ls.map(lessonRow).join("")}</div>`:""}${ls.length<ordered.length?`<div class="row"><button class="btn ghost sm" type="button" data-npcall="${id}">All ${ordered.length} lessons with ${n.short} ▾</button></div>`:""}
     ${id==="mensah"?`<div class="row"><button class="btn ghost sm" type="button" data-act="howto">How do I play?</button></div>`:""}`;
-  card.hidden=false; renderHUD();
+  card.hidden=false; renderHUD(); if(SAVE.sound&&VOX.ok) VOX.say(n.hello(),{who:id});
 }
 function closeCard(){ hush(); card.hidden=true; if(three) three.talking(null); if(mode==="talk"){ mode="world"; if(three) three.control(true); } renderHUD(); }
 const INTRO=()=>[
@@ -8070,11 +8221,14 @@ function runIntro(step){ step=step||0; if(!three&&!sceneFailed){ setTimeout(()=>
   card.innerHTML=`<div class="dlg-h">${avatar(n)}<div><b>${n.name}</b><small>${n.role}</small></div>${canSpeak?`<button type="button" class="rxbtn" data-act="speakintro" data-i="${step}">${SVG_SPK}</button>`:""}</div>
     <p class="say">${L[step]}</p><div class="ldots">${L.map((_,k)=>`<i class="${k<=step?"on":""}"></i>`).join("")}</div>
     <div class="row"><span class="grow"></span><button class="btn gold" type="button" data-act="intronext" data-i="${step}">${step<L.length-1?"Next ▶":"Let's go ▶"}</button></div>`;
-  card.hidden=false; renderHUD(); }
+  card.hidden=false; renderHUD(); if(SAVE.sound&&VOX.ok) VOX.say(L[step],{who:"mensah"}); }
 function introNext(i){ hush(); const L=INTRO(); if(i<L.length-1) return runIntro(i+1); SAVE.intro=true; persist(); closeCard(); updateObjective(); if(three) setTimeout(()=>{ if(mode==="world") ctlHint(true); },300); }
 function gfxUI(p){ if(!three||!three.gfx) return; const g=three.gfx(p); const el=$("#gfxInfo"); if(el) el.textContent=g.text; document.querySelectorAll("[data-gfx]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gfx===g.pref))); }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-gfx]"); if(b){ sfx("click"); gfxUI(b.dataset.gfx); } });
-function openModal(which){ if(which==="menu") gfxUI(); $("#menuPanel").hidden=which!=="menu"; $("#leavePanel").hidden=which!=="leave"; $("#modal").hidden=false; sfx("click"); if(three&&mode==="world") three.control(false); const f=$("#mbox").querySelector(which==="leave"?"#leavePanel .btn":"#menuPanel .mrow"); if(f) f.focus(); }
+function voxUI(){ const el=$("#voxInfo"); if(!el) return; if(!VOX.ok){ el.textContent="This browser can't speak."; return; }
+  const tip=VOX.best()>=30?"":IOSDEV?" For more natural voices: iPhone Settings → Accessibility → Spoken Content → Voices → English, and download an Enhanced or Premium voice.":touchUI?" For more natural voices: phone Settings → Text-to-speech → Google → install the English (Nigeria) or English (UK) voice.":" Tip: Microsoft Edge has very natural “Online (Natural)” voices.";
+  el.textContent=(SAVE.sound?"Characters speak their lines. ":"Turn on Sound and voice to hear characters. ")+"Mrs Mensah: "+VOX.voiceFor("mensah")+"."+tip; }
+function openModal(which){ if(which==="menu"){ gfxUI(); voxUI(); } $("#menuPanel").hidden=which!=="menu"; $("#leavePanel").hidden=which!=="leave"; $("#modal").hidden=false; sfx("click"); if(three&&mode==="world") three.control(false); const f=$("#mbox").querySelector(which==="leave"?"#leavePanel .btn":"#menuPanel .mrow"); if(f) f.focus(); }
 function closeModal(){ if($("#modal").hidden) return; $("#modal").hidden=true; if(three&&mode==="world") three.control(true); }
 let hintT=null, hintShown=false;
 function ctlHint(on){ const el=$("#ctlHint"); if(!el) return; clearTimeout(hintT); if(!on){ el.hidden=true; return; }
@@ -8119,13 +8273,57 @@ function startReview(){ const keys=reviewDue().slice(0,10); const waiting=Object
   if(!beats.length){ keys.forEach(k=>delete SAVE.review[k]); persist(); return toast("Nothing to review."); }
   runPseudo({title:"Review",beats,view:"dispensary"},"review"); }
 function startRevise(s,y){ const pool=shuffle(poolFor(s,y)).slice(0,10); if(!pool.length) return toast("No questions for this subject yet."); runPseudo({title:`Revise: ${s}${y?` · Year ${y}`:""}`,beats:pool,view:"dispensary"},"revise",{subj:s}); }
+/* ---------- class challenges: a daily set (the same for everyone in a year group) and a 90-second emergency rush ---------- */
+const dayKey=d=>{ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+function seededShuffle(a,seed){ let h=2166136261; for(const c of String(seed)) h=Math.imul(h^c.charCodeAt(0),16777619); let x=h>>>0; const r=()=>((x=Math.imul(x^x>>>15,2246822507)^Math.imul(x^x>>>13,3266489909))>>>0)/4294967296; for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function quizPool(unitFilter){ const out=[]; UNITS.forEach(u=>{ if(unitFilter&&!unitFilter(u)) return; u.lessons.forEach(id=>{ const l=LESSONS[id]; if(!l||!l.beats) return; l.beats.forEach((b,i)=>{ if((b.type==="pick"||b.type==="multi")&&b.opts&&b.opts.length>1) out.push(Object.assign({},b,{_key:`${id}#${i}`,_patient:l.patient})); }); }); }); return out; }
+const CH=()=>(SAVE.chal=SAVE.chal||{daily:{},streak:0,last:"",rush:0});
+function startDaily(y){ const pool=seededShuffle(quizPool(u=>u.y===y),dayKey()+"|y"+y).slice(0,6); if(!pool.length) return toast("No questions for this year yet.");
+  runPseudo({title:`Daily challenge · Year ${y}`,beats:pool,view:"dispensary"},"daily",{year:y,t0:Date.now()}); }
+const RUSH_UNITS=[4,5,11,14,17,22];
+let RUSHT=null;
+function startRush(){ const pool=shuffle(quizPool(u=>RUSH_UNITS.includes(u.n))).slice(0,40); if(!pool.length) return toast("No questions yet.");
+  runPseudo({title:"Emergency rush",beats:pool,view:"dispensary"},"rush",{tEnd:Date.now()+90000});
+  const el=$("#rushClock"); clearInterval(RUSHT); el.hidden=false;
+  const tick=()=>{ if(!G||G.kind!=="rush"||G.over||mode!=="lesson"){ clearInterval(RUSHT); el.hidden=true; return; } const ms=Math.max(0,G.tEnd-Date.now()), s=Math.ceil(ms/1000);
+    el.innerHTML=`⏱ ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} <span>· ${G.first} right</span>`; el.classList.toggle("low",s<=15); if(ms<=0){ clearInterval(RUSHT); el.hidden=true; showResult(true); } };
+  tick(); RUSHT=setInterval(tick,250); }
+function shareText(t){ const url=/^https?:/.test(location.href)&&!/claude\.ai|claudeusercontent/.test(location.href)?location.origin+location.pathname:"";
+  const text=t+(url?"\n"+url:""); if(navigator.share){ navigator.share({text}).catch(()=>{}); return; }
+  try{ navigator.clipboard.writeText(text).then(()=>toast("Result copied. Paste it in your class WhatsApp group.",3200),()=>window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank")); }catch(e){ window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank"); } }
+function challengeResult(k){ const c=CH(); let body="";
+  if(k==="daily"){ const y=G.year, key=dayKey(), secs=Math.round((Date.now()-G.t0)/1000); const prev=c.daily[key+"|"+y]; const res={s:G.first,n:G.total,t:secs};
+    if(!prev||res.s>prev.s||(res.s===prev.s&&res.t<prev.t)) c.daily[key+"|"+y]=res;
+    if(c.last!==key){ const yd=dayKey(new Date(Date.now()-864e5)); c.streak=c.last===yd?c.streak+1:1; c.last=key; addXP(30); }
+    Object.keys(c.daily).forEach(k2=>{ if(k2.slice(0,10)<dayKey(new Date(Date.now()-14*864e5))) delete c.daily[k2]; }); persist();
+    const txt=`Dispensary Quest · Daily challenge Year ${y} · ${key}\n${res.s}/${res.n} right in ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")} · streak ${c.streak} day${c.streak>1?"s":""}`;
+    body=`<span class="chip">Daily challenge · Year ${y}</span><h2>${res.s===res.n?"Perfect day!":"Daily challenge done"}</h2><div class="bigstars">${stars(res.s>=res.n?3:res.s>=res.n-1?2:res.s>=res.n/2?1:0)}</div>
+      <div class="pts">${res.s}/${res.n} right first time · ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")} · 🔥 ${c.streak}-day streak</div>
+      <p class="sub">Everyone in Year ${y} gets the same questions today. Share your score with your class and compare.</p>
+      <div class="row"><button class="btn gold" type="button" data-share="${esc(txt)}">Share result</button><button class="btn" type="button" data-act="challenges">Challenges</button><button class="btn ghost" type="button" data-act="toworld">Back to the world</button></div>`; }
+  else { const sc=G.first, best=c.rush||0; if(sc>best){ c.rush=sc; } persist(); if(sc>=5) addXP(Math.min(40,sc*3));
+    const txt=`Dispensary Quest · Emergency rush\n${sc} right in 90 seconds${sc>best&&best?` (new best, beat ${best})`:""}`;
+    body=`<span class="chip">Emergency rush</span><h2>${sc>best?"New best!":"Time's up"}</h2><div class="rushbig">${sc}</div><div class="pts">right answers in 90 seconds · best ${Math.max(sc,best)}</div>
+      <div class="row"><button class="btn gold" type="button" data-share="${esc(txt)}">Share result</button><button class="btn" type="button" data-act="rush">Go again</button><button class="btn ghost" type="button" data-act="challenges">Challenges</button></div>`; }
+  return body; }
+function showChallenges(){ screen.classList.remove("titlebg"); mode="screen"; card.hidden=true; const c=CH(), key=dayKey();
+  const played=[1,2,3].map(y=>c.daily[key+"|"+y]);
+  screen.innerHTML=`<div class="panel journey"><button type="button" class="linkish" data-act="journey">◀ Journey</button><h2 class="h2">Challenges</h2>
+    <div class="chcard"><div><b>📅 Daily challenge</b><small>Six questions, the same for everyone in your year today. Comes back every day. 🔥 Streak: ${c.streak||0} day${c.streak===1?"":"s"}</small></div>
+      <div class="acts">${[1,2,3].map(y=>`<button class="btn sm ${played[y-1]?"ghost":"gold"}" type="button" data-daily="${y}">Year ${y}${played[y-1]?` · ${played[y-1].s}/6`:""}</button>`).join("")}</div></div>
+    <div class="chcard"><div><b>🚑 Emergency rush</b><small>Ninety seconds. Answer as many emergency questions as you can: anaphylaxis, poisoning, collapse, asthma. Best: ${c.rush||0}</small></div>
+      <div class="acts"><button class="btn sm gold" type="button" data-act="rush">Start ▶</button></div></div>
+    <p class="sub">Class leaderboard: tap “Share result” at the end and post it in your class group. Everyone in a year gets the same daily questions, so scores are fair to compare.</p></div>`;
+  screen.hidden=false; renderHUD(); }
+
 function startExam(s){ const pool=shuffle(poolFor(s)).slice(0,12); if(!pool.length) return toast("No questions for this subject yet."); runPseudo({title:s,beats:pool,view:"dispensary"},"exam",{subj:s}); }
 
 function showResult(win){
   hideLens(); const k=G.kind, id=G.lid; if(k==="challenge"&&G.hearts<=0) win=false; G.over=true; clearInterval(TICK); hush(); card.hidden=true; $("#drivehud").hidden=true;
   if(three){ three.setPins(null); three.ring(null); three.stopDrive(); three.weather(null); three.show(null); }
   let body="";
-  if(k==="challenge"){ const s=win?G.hearts:0; const st=LS(id); const prev=st.s, prevP=st.p; const uu=LESSON_UNIT[id], wasDone=uu&&uu.lessons.every(x=>!LESSONS[x]||LS(x).s); if(win){ st.s=Math.max(st.s,s); st.p=Math.max(st.p,G.score); } persist(); const bonus=win?Math.max(0,s-prev)*20:0; if(bonus) addXP(bonus);
+  if(k==="daily"||k==="rush"){ body=challengeResult(k); sfx("win"); }
+  else if(k==="challenge"){ const s=win?G.hearts:0; const st=LS(id); const prev=st.s, prevP=st.p; const uu=LESSON_UNIT[id], wasDone=uu&&uu.lessons.every(x=>!LESSONS[x]||LS(x).s); if(win){ st.s=Math.max(st.s,s); st.p=Math.max(st.p,G.score); } persist(); const bonus=win?Math.max(0,s-prev)*20:0; if(bonus) addXP(bonus);
     const u=LESSON_UNIT[id]; const ul=u?u.lessons:[], ix=ul.indexOf(id); const nxt=[...ul.slice(ix+1),...ul.slice(0,ix)].find(x=>LESSONS[x]&&!LS(x).s)||null;
     if(win) sfx("win");
     if(win&&uu&&!wasDone&&uu.lessons.every(x=>!LESSONS[x]||LS(x).s)){ addXP(50); setTimeout(()=>toast(`Unit ${uu.n} complete: <b>${uu.t}</b> · +50 XP`,4200),900); }
@@ -8148,7 +8346,7 @@ function failMission(){ if(G&&!G.over) showResult(false); }
 /* ---------- Beat engine ---------- */
 function nextBeat(){ if(!G||G.over) return; if(G.kind==="challenge"&&G.hearts<=0) return failMission(); hush(); G.b++; if(G.b>=G.m.beats.length){ showResult(true); return; } runBeat(); }
 function runBeat(){
-  hideLens(); if(!G||G.over) return; const b=G.m.beats[G.b]; G.ans=null; G.sel=new Set(); G.rxOpen=!!b.rx; G.sort=null; G.insp=null; G.rec=null; G.ord=null; G.sn=null; G.wg=null; G.act=null; G.hd=null; G.rh=null; G.ob=null; G.tried=false; if(three) three.pulse(0); G.hint=false; G.elim=-1;
+  hideLens(); if(!G||G.over) return; const b=G.m.beats[G.b]; G.ans=null; G.sel=new Set(); G.rxOpen=!!b.rx; G.sort=null; G.insp=null; G.rec=null; G.ord=null; G.sn=null; G.wg=null; G.act=null; G.hd=null; G.rh=null; G.ob=null; G.tr=null; G.tried=false; if(three) three.pulse(0); G.hint=false; G.elim=-1;
   renderHUD(); if(card.classList.contains("min")) setCardMin(false);
   if(three) three.weather(b.weather||null);
   if(b.at&&three){ const p=placeOf(b.at); three.fly(p); const [s,id]=b.at.split(":"); if(s==="st"){ three.ring(p.floor[0],p.floor[1],1); three.basket(id); } else if(p.ring) three.ring(p.ring[0],p.ring[1],p.ring[2]); else if(s!=="col") three.ring(p.target[0],p.target[2],0.8); else three.ring(null); }
@@ -8184,13 +8382,14 @@ const HINTS=["Read every option. Which one keeps the patient safe?","Rule out th
 function hintBox(b){ const n=NPCS.mensah; return `<div class="hintb">${avatar(n)}<span>${b.hint||HINTS[G.b%HINTS.length]}</span></div>`; }
 function canHint(){ return G&&G.kind!=="challenge"&&G.kind!=="exam"; }
 function renderCard(){
-  const b=G.m.beats[G.b]; if(b.type==="weigh") return renderWeigh(); if(b.type==="act") return renderAct(); if(b.type==="hold") return (b.mode==="timer"||b.mode==="endpoint")?renderTimer():renderHold(); if(b.type==="rhythm") return renderRhythm(); if(b.type==="observe") return renderObserve();
+  const b=G.m.beats[G.b]; if(b.type==="tray"&&!G.ans) return renderTray(); if(b.type==="weigh") return renderWeigh(); if(b.type==="act") return renderAct(); if(b.type==="hold") return (b.mode==="timer"||b.mode==="endpoint")?renderTimer():renderHold(); if(b.type==="rhythm") return renderRhythm(); if(b.type==="observe") return renderObserve();
   const pk=patientOf(b);
   let h=`<div class="card-h">${b.talk?`<span class="chip">Counselling</span>`:placeChip(b)}${pk?`<button type="button" class="rxbtn" data-act="rx" aria-pressed="${G.rxOpen}">℞ Prescription</button>`:""}${canSpeak?`<button type="button" class="rxbtn" data-act="speakq" aria-label="Read aloud">${SVG_SPK}</button>`:""}${canHint()&&!G.ans?`<button type="button" class="rxbtn" data-act="hint" aria-pressed="${G.hint}">${SVG_BULB} Hint</button>`:""}</div>`;
   if(pk&&G.rxOpen) h+=rxMini(pk);
   if(G.hint&&!G.ans) h+=hintBox(b);
   if(b.talk){ const n=NPCS[b.talk]||PEOPLE[b.talk]||{short:"Patient"}; const o=G.ans&&b.opts[G.ans.sel[0]];
-    h+=`<div class="chat"><div class="bub them"><b>${n.short}</b>${b.q}</div>${o?`<div class="bub me">${o.t}</div><div class="bub them ${G.ans.res}"><b>${n.short}</b>${o.re||""}</div>`:""}</div>`; }
+    h+=`<div class="chat"><div class="bub them"><b>${n.short}</b>${b.q}</div>${o?`<div class="bub me">${G.ans.said?`“${esc(G.ans.said)}”<small class="said">Closest answer: ${o.t}</small>`:o.t}</div><div class="bub them ${G.ans.res}"><b>${n.short}</b>${o.re||""}</div>`:""}</div>`;
+    if(!G.ans&&SRC) h+=`<div class="microw"><button type="button" class="micbtn" id="micBtn" data-act="mic" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="currentColor"/><path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12v2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Say your answer</button><span class="micout" id="micOut">or tap one below</span></div>`; }
   else h+=`<p class="q">${b.q}</p>`;
   if(b.label){ const L=b.label; h+=(L.lines?`<div class="lbl">${L.lines.map((ln,i)=>`<div class="${L.erri===i?"err":""}">${i===0?`<b>${ln}</b>`:ln}</div>`).join("")}<div>${L.who||""}</div></div>`:`<div class="lbl"><div class="${L.err==="drug"?"err":""}"><b>${L.drug}</b></div><div class="${L.err==="dir"?"err":""}">${L.dir}</div><div class="${L.err==="qty"?"err":""}">Qty: ${L.qty}</div><div>${pk?PATIENTS[pk].name:""} · 11/10/2026</div></div>`).replace(/class="err"/g,G.ans?'class="err"':'class=""'); }
   if(b.type==="pick"||b.type==="multi"){
@@ -8206,10 +8405,10 @@ function renderCard(){
     h+= G.ans ? `<div class="counter"><output>${G.val}</output></div>` : `<div class="counter"><button type="button" data-act="dec" aria-label="Less">−</button><output aria-live="polite">${G.val}<small>${b.unit}</small></output><button type="button" data-act="inc" aria-label="More">+</button></div><div class="row"><button class="btn" type="button" data-act="confirm">Confirm</button></div>`;
   }
   if(G.ans){ const r=G.ans; const retry=canHint()&&r.res!=="good"&&!b.talk; h+=`<div class="fb ${r.res}">${r.res==="good"?"✓":r.res==="part"?"½":"✗"}<span>${r.extra?r.extra+" ":""}${b.why}</span></div><div class="row">${retry?`<button class="btn ghost" type="button" data-act="retry">Try again</button>`:""}<span class="grow"></span><button class="btn gold" type="button" data-act="next">${G.b<G.m.beats.length-1?"Next ▶":"Finish ▶"}</button></div>`; }
-  card.innerHTML=h; card.hidden=false;
+  card.innerHTML=h; card.hidden=false; talkFX(b);
 }
 function trackAnswer(res){
-  const b=G.m.beats[G.b]; if(!QUIZ.includes(b.type)&&!["weigh","act","hold","rhythm","observe"].includes(b.type)) return;
+  const b=G.m.beats[G.b]; if(!QUIZ.includes(b.type)&&!["weigh","act","hold","rhythm","observe","tray"].includes(b.type)) return;
   const first=!G.tried; G.tried=true; if(first){ G.total++; if(res==="good") G.first++; }
   const key=b._key||(G.lid?`${G.lid}#${G.b}`:null);
   if(key&&QUIZ.includes(b.type)){
@@ -8222,10 +8421,10 @@ function judge(res,extra){
   const b=G.m.beats[G.b]; G.ans.res=res; G.ans.extra=extra||"";
   trackAnswer(res);
   if(res==="good"){ addScore(100); sfx("ok"); } else if(res==="part"){ addScore(50); sfx("ok"); } else { if(loseHeart()) { renderCard(); return; } }
-  if(b.after){ G.flags[b.after]=true; if(b.afterMsg) setTimeout(()=>toast(b.afterMsg,3800),400); }
+  if(b.after){ G.flags[b.after]=true; if(b.afterMsg&&G.lid) setTimeout(()=>toast(b.afterMsg,3800),400); }
   renderCard();
 }
-function answerPick(i){ const b=G.m.beats[G.b]; const o=b.opts[i]; G.ans={sel:[i]}; judge(o.ok===1?"good":o.ok>0?"part":"bad",o.ok===1?"":o.no||""); }
+function answerPick(i){ const b=G.m.beats[G.b]; const o=b.opts[i]; G.ans={sel:[i],said:G.said||null}; G.said=null; judge(o.ok===1?"good":o.ok>0?"part":"bad",o.ok===1?"":o.no||""); }
 function answerMulti(){ const b=G.m.beats[G.b]; const sel=[...G.sel]; G.ans={sel};
   const need=b.opts.filter(o=>o.ok).length; let hit=0,bad=0,note=""; sel.forEach(i=>{ if(b.opts[i].ok) hit++; else { bad++; if(b.opts[i].no) note=b.opts[i].no; } });
   judge(hit===need&&bad===0?"good":hit>=need-1&&bad<=1?"part":"bad",note); }
@@ -8956,6 +9155,8 @@ document.addEventListener("click",e=>{
     if(act==="crecancel"){ screen.classList.remove("side"); if(three) three.look(SAVE.player); return toWorld(); }
     if(act==="journey"||act==="menu") return showJourney();
     if(act==="passport") return showPassport();
+    if(act==="challenges"){ sfx("click"); return showChallenges(); }
+    if(act==="rush"){ return startRush(); }
     if(act==="title"){ closeModal(); stopRun(); return showTitle(); }
     if(act==="closecard") return closeCard();
     if(act==="closemodal") return closeModal();
@@ -8970,7 +9171,9 @@ document.addEventListener("click",e=>{
     if(act==="crerand"){ CRE.skin=Math.floor(Math.random()*SKINS.length); CRE.hair=HAIRS[Math.floor(Math.random()*HAIRS.length)][0]; CRE.hairCol=Math.floor(Math.random()*HAIRCOLS.length); CRE.uni=Math.floor(Math.random()*UNIFORMS.length); CRE.skirt=Math.random()<.5; CRE.coat=Math.random()<.7; sfx("click"); if(three) three.look(CRE); return renderCreator(); }
     if(act==="howto"){ return runIntro(1); }
     if(act==="intronext") return introNext(+a.dataset.i);
-    if(act==="speakintro") return speak(INTRO()[+a.dataset.i]);
+    if(act==="speakintro") return speak(INTRO()[+a.dataset.i],"mensah");
+    if(act==="mic"){ return micStart(); }
+    if(act==="voxtest"){ sfx("click"); VOX.reset(); voxUI(); return VOX.say([["Akwaaba! I'm Mrs Mensah, your mentor at St Agnes.","mensah"],["Please, can you help my baby Kofi? He has had running stomach for two days.","owusu"],["Of course. Let's start with oral rehydration salts.","player"]]); }
     if(!G) return;
     if(act==="speak"&&G.kind==="learn"){ const c=G.m.learn[G.i]; return speak(c.t+". "+c.b); }
     if(act==="lnext") return learnStep(1);
@@ -8988,6 +9191,10 @@ document.addEventListener("click",e=>{
     if(act==="walk"&&G.insp){ backToWalk(); return; }
     if(act==="olist"&&G.rec){ G.rec.list=!G.rec.list; renderRecall(); return; }
     return; }
+  const dly=e.target.closest("[data-daily]"); if(dly){ sfx("click"); return startDaily(+dly.dataset.daily); }
+  const shr=e.target.closest("[data-share]"); if(shr){ sfx("click"); return shareText(shr.dataset.share); }
+  const trb=e.target.closest("[data-tr]"); if(trb&&G&&G.tr){ trAct(trb.dataset.tr); return; }
+  const tk=e.target.closest(".trsvg .tab"); if(tk&&G&&G.tr&&G.tr.st===1){ trAct("t:"+tk.dataset.tk); return; }
   const o=e.target.closest("[data-opt]"); if(o&&G&&!G.ans){ const b=G.m.beats[G.b]; const i=+o.dataset.opt; if(b.type==="pick") answerPick(i); else { G.sel.has(i)?G.sel.delete(i):G.sel.add(i); sfx("click"); renderCard(); } return; }
   const so=e.target.closest("[data-sort]"); if(so&&G&&G.sort){ sortAnswer(so.dataset.sort); return; }
   const hu=e.target.closest("[data-hunt]"); if(hu){ huntAnswer(hu.dataset.hunt); return; }
@@ -9009,7 +9216,7 @@ $("#modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal()
 $("#objective").addEventListener("click",()=>{ if(mode==="world"&&OBJ){ sfx("click"); gotoNpc(OBJ.npc); toast(`You're next to <b>${NPCS[OBJ.npc].short}</b>. Talk to start.`,2400); } });
 $("#btnMap").addEventListener("click",()=>openMap());
 $("#btnReview").addEventListener("click",()=>{ if(mode==="lesson"&&G&&!G.over){ toast("Finish or leave this lesson first.",1800); return; } startReview(); });
-$("#btnSound").addEventListener("click",()=>{ SAVE.sound=!SAVE.sound; persist(); $("#btnSound").setAttribute("aria-pressed",String(SAVE.sound)); if(SAVE.sound) sfx("click"); else hush(); });
+$("#btnSound").addEventListener("click",()=>{ SAVE.sound=!SAVE.sound; persist(); voxUI(); $("#btnSound").setAttribute("aria-pressed",String(SAVE.sound)); if(SAVE.sound) sfx("click"); else hush(); });
 $("#btnSound").setAttribute("aria-pressed",String(SAVE.sound));
 function inAct(){ return mode==="lesson"&&three&&three.inActivity(); }
 function isFPnow(){ return inAct()?three.actFP():SAVE.fp!==false; }
@@ -10274,7 +10481,13 @@ function initScene(){
         else if(n==="Head") M3.premultiply(HQ.copy(Rt).multiply(Rh).multiply(Rti));
         else if(W[n]>0){ P3.copy(D[n]).multiply(C.W0[n]); M3.slerp(P3,W[n]); }
         WC[n]=(WC[n]||new THREE.Quaternion()).copy(M3); b.quaternion.copy(tmp.copy(parentW).invert().multiply(M3)); }); };
-    H.sync=()=>{ if(H.mocap) syncMC(); else syncPR(); face(); };
+    /* reactions: a nod when advice makes sense, a head shake when it doesn't, a puzzled tilt when it's only partly right */
+    const RQ=new THREE.Quaternion(), RQ2=new THREE.Quaternion(), RQ3=new THREE.Quaternion(), RAX=new THREE.Vector3();
+    H.reactFX=()=>{ const Rc=H.react, hb=bones.Head; if(!Rc||!hb) return; const t=(performance.now()-Rc.t0)/1000, dur=Rc.k==="tilt"?1.8:1.4; if(t>dur){ H.react=null; return; }
+      const env=Math.sin(Math.min(1,t/dur)*Math.PI); g.getWorldQuaternion(RQ3); let ang;
+      if(Rc.k==="nod"){ RAX.set(1,0,0).applyQuaternion(RQ3); ang=0.22*Math.sin(t*10)*env; } else if(Rc.k==="shake"){ RAX.set(0,1,0); ang=0.3*Math.sin(t*9)*env; } else { RAX.set(0,0,1).applyQuaternion(RQ3); ang=0.17*env; }
+      hb.getWorldQuaternion(RQ); RQ2.setFromAxisAngle(RAX.normalize(),ang).multiply(RQ); hb.parent.getWorldQuaternion(RQ).invert(); hb.quaternion.copy(RQ.multiply(RQ2)); };
+    H.sync=()=>{ if(H.mocap) syncMC(); else syncPR(); face(); if(H.holdIK) H.holdIK(); if(H.react) H.reactFX(); };
     const syncPR=()=>{ const Rt=R(torso), Rh=R(head);
       const D={Spine:Rt, Head:Rt.clone().multiply(Rh),
         LeftArm:Rt.clone().multiply(R(armR)).multiply(C.QB.LeftArm), LeftForeArm:Rt.clone().multiply(R(armR)).multiply(R(elbR)).multiply(C.QB.LeftForeArm),
@@ -10298,7 +10511,20 @@ function initScene(){
         hand:()=>F(mid("LeftHand","LeftForeArm",-0.35),0.02,0),wrist:()=>F(W("LeftHand"),0.02,0),
         leg:()=>F(mid("LeftLeg","LeftFoot",0.5),0.05,0),knee:()=>F(W("LeftLeg"),0.07,0)}[k]||(()=>g.position.clone()))(); };
     if(L.hair==="wrap"&&bones.Head) headWrap(C,bones.Head,L);
-    if(o.baby){ armL.rotation.set(-0.55,0.75,0.1); armR.rotation.set(-0.45,-0.55,-0.05); elbL.rotation.x=-1.5; elbR.rotation.x=-1.4; H.babyBun=babyBundle(o,AG,C.scale/0.0097); }
+    if(o.baby){ armL.rotation.set(-0.55,0.75,0.1); armR.rotation.set(-0.45,-0.55,-0.05); elbL.rotation.x=-1.5; elbR.rotation.x=-1.4; H.babyBun=babyBundle(o,AG,C.scale/0.0097); curlFingers(inst,0.32);
+      /* cradle hold: each arm is solved (two-bone IK) so the hands rest on the bundle's surface, wherever the body sways */
+      const HOLD={R:{t:[-0.10,-0.09,-0.01],p:[-0.35,0.25,-0.35]},L:{t:[0.03,-0.13,0.10],p:[-0.2,-0.45,0.05]}};
+      const V=()=>new THREE.Vector3(), Qn=()=>new THREE.Quaternion(), wp=b=>b.getWorldPosition(V());
+      const aim=(b,from,to)=>{ const p=wp(b), cur=from.clone().sub(p).normalize(), want=to.clone().sub(p).normalize(); if(cur.lengthSq()<1e-9||want.lengthSq()<1e-9) return;
+        const nw=Qn().setFromUnitVectors(cur,want).multiply(b.getWorldQuaternion(Qn())); b.quaternion.copy(b.parent.getWorldQuaternion(Qn()).invert().multiply(nw)); b.updateMatrixWorld(true); };
+      H.holdIK=()=>{ const B=H.babyBun&&H.babyBun.parent; if(!B||!bones.LeftArm||!bones.RightArm) return; g.updateMatrixWorld(true); const H2=HOLD;
+        [["Right","R"],["Left","L"]].forEach(([sd,k])=>{ const a=bones[sd+"Arm"], f=bones[sd+"ForeArm"], h=bones[sd+"Hand"]; if(!a||!f||!h) return;
+          const S=wp(a), E=wp(f), Hd=wp(h), l1=S.distanceTo(E), l2=E.distanceTo(Hd);
+          const T=B.localToWorld(V().fromArray(H2[k].t)), Pp=B.localToWorld(V().fromArray(H2[k].p));
+          const dv=T.clone().sub(S); let d=dv.length(); d=Math.min(l1+l2-1e-4,Math.max(Math.abs(l1-l2)+1e-4,d)); dv.normalize();
+          const T2=S.clone().addScaledVector(dv,d), pv=Pp.clone().sub(S); pv.addScaledVector(dv,-pv.dot(dv)); if(pv.lengthSq()<1e-9) pv.set(0,-1,0); pv.normalize();
+          const aa=(l1*l1-l2*l2+d*d)/(2*d), hh=Math.sqrt(Math.max(0,l1*l1-aa*aa)); const Ed=S.clone().addScaledVector(dv,aa).addScaledVector(pv,hh);
+          aim(a,E,Ed); aim(f,wp(h),T2); }); }; }
     if(o.seated&&!H.mocap){ up.position.y=-0.43; H.base=-0.43; legL.rotation.x=legR.rotation.x=-1.5; kneeL.rotation.x=kneeR.rotation.x=1.5; elbL.rotation.x=elbR.rotation.x=-0.6; }
     if(H.mocap){ up.position.y=H.base; H.mocapStep(0,0.016); }
     H.sync(); }
@@ -10315,7 +10541,7 @@ function initScene(){
     /* move into the head bone's frame (rest pose) */
     const Wq=C.W0.Head, Wp=C.POS.Head; G.position.sub(Wp).applyQuaternion(Wq.clone().invert()); G.quaternion.copy(Wq.clone().invert()); hb.add(G); }
   /* a baby wrapped in a wax-print cloth, hood over the head (as mothers carry them) */
-  function babyBundle(o,up,k){ const O=new THREE.Group(); O.position.set(0.03,1.14*(k||1),0.17); O.rotation.set(0.1,-0.2,1.32); up.add(O); const B=new THREE.Group(); O.add(B);
+  function babyBundle(o,up,k){ const O=new THREE.Group(); const BP={p:[0.0,1.19,0.115],r:[0,0.2,1.1],y:0.75}; O.position.set(BP.p[0],BP.p[1]*(k||1),BP.p[2]); O.rotation.set(BP.r[0],BP.r[1],BP.r[2]); up.add(O); const B=new THREE.Group(); B.rotation.y=BP.y; O.add(B);
     const ct=clothTex("wax","#E8B923").clone(); ct.needsUpdate=true; ct.wrapS=ct.wrapT=THREE.RepeatWrapping; ct.repeat.set(3,2); const cloth=TM(0xFFFFFF,{map:ct,r:0.9}); cloth.side=THREE.DoubleSide;
     const prof=[[0.001,-0.2],[0.06,-0.19],[0.088,-0.13],[0.095,-0.02],[0.092,0.08],[0.085,0.15],[0.07,0.2],[0.045,0.225],[0.001,0.23]].map(([r,y])=>new THREE.Vector2(r,y));
     const body=new THREE.Mesh(new THREE.LatheGeometry(prof,28),cloth); body.scale.set(1,1,0.82); body.castShadow=true; B.add(body);
@@ -11048,7 +11274,8 @@ function initScene(){
     actFP:(on)=>{ if(on===undefined) return actFP; actFP=!!on; if(ACAM){ ACAM.yo=0; ACAM.po=0; } return actFP; }, inActivity:()=>!!ACAM&&!playerMode,
     look:(L)=>{ buildPlayer(L); buildHands(L); }, station, patient,
     signs:(o)=>{ if(PT) Object.assign(PT.sg,o||{}); }, pulse:(r)=>{ pulseRate=r||0; }, onSign:(f)=>{ SIGN_CB=f; },
-    talking:(id)=>{ NPCL.forEach(h=>h.talk=h.id===id); if(PT) PT.talk=id==="pt"; }, physics:()=>!!PHYS,
+    talking:(id)=>{ NPCL.forEach(h=>h.talk=h.id===id); if(PT) PT.talk=id==="pt"; },
+    react:(id,k)=>{ const h=id==="pt"?PT:NPCL.find(x=>x.id===id); if(h) h.react={k,t0:performance.now()}; }, physics:()=>!!PHYS,
     titr:(v,at)=>{ const C=COLM; if(!C.cf) return; if(v==null){ C.cf.material.color.setHex(C.cfCol).convertSRGBToLinear(); return; } const k=v<at?0:Math.min(1,(v-at)/0.3); C.cf.material.color.setRGB(0.94-0.03*k,0.97-0.6*k,0.98-0.35*k).convertSRGBToLinear(); }, setFP:(on)=>{ FP=!!on; if(PL) PL.g.visible=!FP||!playerMode; }, actShow, actPrep, fx:runFx, hands:(on)=>{ handsOn=!!on; }, level, heap,
     teleport:(x,z,ry)=>{ if(SOLIDS.length&&hitSolid(x,z,0.36,0.08,1.7)){ let best=null; for(let r=0.2;r<4&&!best;r+=0.2) for(let a=0;a<Math.PI*2;a+=Math.PI/12){ const tx=x+Math.cos(a)*r, tz=z+Math.sin(a)*r; if(!hitSolid(tx,tz,0.36,0.08,1.7)&&!COLL.some(b=>tx>b[0]-0.36&&tx<b[1]+0.36&&tz>b[2]-0.36&&tz<b[3]+0.36)){ best=[tx,tz]; break; } } if(best){ x=best[0]; z=best[1]; } }
       P.x=x; P.z=z; P.ry=ry; if(PHYS){ PHYS.player.position.set(x,0.34,z); PHYS.player.velocity.set(0,0,0); } if(PL){ PL.g.position.set(x,0,z); PL.g.rotation.y=ry; } goal.th=ry+Math.PI; goal.t.set(x,1.45,z); cur.t.copy(goal.t); cur.th=goal.th; },
