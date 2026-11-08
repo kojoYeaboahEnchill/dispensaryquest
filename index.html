@@ -1,5 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Dispensary Quest</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Dispensary Quest"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#0D6B5B"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"></head><body><title>Dispensary Quest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -9509,14 +9508,36 @@ function initScene(){
     if(hot) tagHot(m,hot); scene.add(m);
     const pc=M(shade(roof||0xC4CBC8,0.82)), yt=y0+h; m.userData.extra=[B(w+0.3,0.45,0.3,pc,(x0+x1)/2,yt,z0),B(w+0.3,0.45,0.3,pc,(x0+x1)/2,yt,z1),B(0.3,0.45,d,pc,x0,yt,(z0+z1)/2),B(0.3,0.45,d,pc,x1,yt,(z0+z1)/2)];
     m.userData.box=[x0,x1,z0,z1,y0+h]; return m; }
+  /* a standalone roof that never disappears: solid when seen from outside, translucent when you are inside (so the furniture still shows). One slab mesh (+ a rooftop water tank on larger blocks). */
+  function keepRoof(x0,x1,z0,z1,yt,rcol,tank){
+    const g=new THREE.Group(); scene.add(g); const w=x1-x0,d=z1-z0,cx=(x0+x1)/2,cz=(z0+z1)/2;
+    const base=rcol?rcol.clone():new THREE.Color(0xC7CCC6).convertSRGBToLinear(); const side=base.clone().multiplyScalar(0.6);
+    const mk=col=>{ const m=new THREE.MeshStandardMaterial({roughness:.92,metalness:0}); m.color.copy(col); return m; };
+    const rc=mk(base), fc=mk(side), mats=[rc,fc], meshes=[];
+    const slab=new THREE.Mesh(unit,[fc,fc,rc,fc,fc,fc]); slab.scale.set(w+0.8,0.34,d+0.8); slab.position.set(cx,yt+0.17,cz); slab.castShadow=true; slab.receiveShadow=true; slab.userData.noSolid=true; g.add(slab); meshes.push(slab);
+    if(tank){ const bx=cx+w*0.26, bz=cz-d*0.26, y0=yt+0.34; const bs=new THREE.Mesh(unit,fc); bs.scale.set(1.5,0.4,1.5); bs.position.set(bx,y0+0.2,bz); bs.userData.noSolid=true; bs.castShadow=true; g.add(bs); meshes.push(bs);
+      const tm=mk(new THREE.Color(0x27367F).convertSRGBToLinear()); mats.push(tm); const tnk=new THREE.Mesh(new THREE.CylinderGeometry(0.72,0.72,1.1,18),tm); tnk.position.set(bx,y0+0.4+0.55,bz); tnk.userData.noSolid=true; tnk.castShadow=true; g.add(tnk); meshes.push(tnk);
+      const cm=mk(new THREE.Color(0x3A4CA0).convertSRGBToLinear()); mats.push(cm); const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.5,0.18,14),cm); cap.position.set(bx,y0+0.4+1.1+0.09,bz); cap.userData.noSolid=true; g.add(cap); meshes.push(cap); }
+    return {g,mats,meshes}; }
+  let ENT;
   const doorT=tex((g,w,h)=>{ g.fillStyle="#3B4A46"; g.fillRect(0,0,w,h); g.fillStyle="#6E8F99"; g.fillRect(10,10,w/2-15,h-20); g.fillRect(w/2+5,10,w/2-15,h-20); g.fillStyle="rgba(255,255,255,.22)"; g.fillRect(14,14,w/2-25,40); g.fillRect(w/2+9,14,w/2-25,40); g.fillStyle="#C9D1CE"; g.fillRect(w/2-9,h/2,5,30); g.fillRect(w/2+4,h/2,5,30); },128,256);
   const mDoor=SMAT({map:doorT,roughness:.4});
-  function entrance(shell,face,c,w){ const bx=shell.userData.box; if(!bx) return; const [x0,x1,z0,z1]=bx; const dh=2.4; let x,z,ry;
-    if(face==="z0"){ x=c; z=z0-0.03; ry=Math.PI; } else if(face==="z1"){ x=c; z=z1+0.03; ry=0; } else if(face==="x0"){ x=x0-0.03; z=c; ry=-Math.PI/2; } else { x=x1+0.03; z=c; ry=Math.PI/2; }
-    const p=new THREE.Mesh(new THREE.PlaneGeometry(w*0.92,dh),mDoor); p.position.set(x,dh/2,z); p.rotation.y=ry; p.userData.door=1; scene.add(p);
-    const cn=B(face[0]==="z"?w+0.8:1.2,0.12,face[0]==="z"?1.2:w+0.8,M(0x2F3D39),x+(face==="x0"?-0.55:face==="x1"?0.55:0),dh+0.15,z+(face==="z0"?-0.55:face==="z1"?0.55:0));
-    const mat=flat(face[0]==="z"?w:1.4,face[0]==="z"?1.4:w,M(0x8A918E,{roughness:1}),x+(face==="x0"?-0.7:face==="x1"?0.7:0),z+(face==="z0"?-0.7:face==="z1"?0.7:0),-0.02);
-    shell.userData.extra=(shell.userData.extra||[]).concat([p,cn]); }
+  function entrance(shell,face,c,w){ const bx=shell.userData.box; if(!bx) return; const [x0,x1,z0,z1]=bx; if(!ENT) ENT=makeIB();
+    let x,z,ry; if(face==="z0"){ x=c; z=z0; ry=Math.PI; } else if(face==="z1"){ x=c; z=z1; ry=0; } else if(face==="x0"){ x=x0; z=c; ry=-Math.PI/2; } else { x=x1; z=c; ry=Math.PI/2; }
+    const co=Math.cos(ry), sn=Math.sin(ry), rot=Math.abs(Math.abs(ry)-Math.PI/2)<0.01;   /* local +z = outward, +x = along wall */
+    const W=(lx,ly,lz,sw,sh,sd,col,m)=>{ const wx=x+lx*co+lz*sn, wz=z-lx*sn+lz*co; ENT.add(wx,ly,wz,rot?sd:sw,sh,rot?sw:sd,col,m||""); };
+    const dh=2.5, half=w/2, fcol="#33403C", mcol="#5A625F", gcol="#2F7A69";
+    W(-half-0.1,0,0.02,0.2,dh+0.12,0.34,fcol); W(half+0.1,0,0.02,0.2,dh+0.12,0.34,fcol); W(0,dh,0.02,w+0.4,0.24,0.36,fcol);   /* jambs + lintel */
+    W(0,1.15,0.04,w-0.06,0.07,0.08,fcol); W(0,0,0.05,0.05,dh-0.14,0.07,"#22282A");                                           /* mid rail + centre stile */
+    W(-0.14,1.0,0.09,0.05,0.34,0.07,mcol,"metal"); W(0.14,1.0,0.09,0.05,0.34,0.07,mcol,"metal");                             /* handles */
+    W(0,0,0.5,w+1.0,0.16,0.55,"#C9CFCB"); W(0,0,0.92,w+1.6,0.1,0.4,"#B6BDB8");                                               /* steps */
+    W(0,0.16,0.5,w+0.1,0.03,0.62,gcol,"soft");                                                                                /* welcome mat */
+    const px=half+0.55; W(-px,0,1.05,0.18,2.75,0.18,mcol,"metal"); W(px,0,1.05,0.18,2.75,0.18,mcol,"metal");                 /* portico posts */
+    W(0,2.72,0.75,w+1.6,0.18,2.1,"#E8ECEA"); W(0,2.7,1.72,w+1.7,0.14,0.2,gcol);                                              /* canopy slab + band */
+    const gmat=SMAT({color:0x9ED3DB,transparent:true,opacity:.42,roughness:.06,metalness:0,depthWrite:false,side:THREE.DoubleSide});
+    const door=(lx)=>{ const m=new THREE.Mesh(unit,gmat); m.scale.set(rot?0.06:half-0.06,dh-0.14,rot?half-0.06:0.06); const wx=x+lx*co, wz=z-lx*sn; m.position.set(wx,(dh-0.14)/2,wz); m.rotation.y=ry; m.userData.noSolid=1; m.castShadow=false; scene.add(m); return m; };
+    const dL=door(-half/2), dR=door(half/2);
+    shell.userData.extra=(shell.userData.extra||[]).concat([dL,dR]); }
 
   /* ---------- Dispensary ---------- */
   const floorT=tex((g,w,h)=>{ g.fillStyle="#DCE5E1"; g.fillRect(0,0,w,h); const r=rng(7);
@@ -9752,37 +9773,111 @@ function initScene(){
   const mSS=M(0xD5DCDF,{metalness:.6,roughness:.3});
   const SKIN=["#5C3A21","#7A4B2A","#8D5A3B","#4A2E1A","#6B4226"];
   const PCOL=["#C8423B","#2F7FB8","#3E9A5A","#E2A33B","#7B5BB0","#FFFFFF","#F2F2EE","#1F8A8A"];
-  function makeIB(){ const L=[]; return {add(x,y,z,w,h,d,c){ L.push([x,y,z,w,h,d,c]); }, build(g){ if(!L.length) return;
-    const im=new THREE.InstancedMesh(unit,SMAT({color:0xffffff,roughness:.75}),L.length); const col=new THREE.Color();
-    L.forEach((b,i)=>{ mtx.compose(new THREE.Vector3(b[0],b[1]+b[4]/2,b[2]),q,new THREE.Vector3(b[3],b[4],b[5])); im.setMatrixAt(i,mtx); im.setColorAt(i,col.set(b[6]).convertSRGBToLinear()); });
-    im.castShadow=true; im.receiveShadow=true; g.add(im); }}; }
+  function makeIB(){ const L=[]; return {add(x,y,z,w,h,d,c,mk){ L.push([x,y,z,w,h,d,c,mk||""]); }, build(g){ if(!L.length) return;
+    const MK={"":{roughness:.75},metal:{roughness:.3,metalness:.8},gloss:{roughness:.28},glass:{roughness:.08,transparent:true,opacity:.3,depthWrite:false},glow:null,soft:{roughness:.95}};
+    const by={}; L.forEach(b=>{ (by[b[7]]=by[b[7]]||[]).push(b); });
+    Object.entries(by).forEach(([k,list])=>{ const mat=k==="glow"?new THREE.MeshBasicMaterial({color:0xffffff}):SMAT(Object.assign({color:0xffffff},MK[k]||MK[""]));
+      const im=new THREE.InstancedMesh(unit,mat,list.length); const col=new THREE.Color();
+      list.forEach((b,i)=>{ mtx.compose(new THREE.Vector3(b[0],b[1]+b[4]/2,b[2]),q,new THREE.Vector3(b[3],b[4],b[5])); im.setMatrixAt(i,mtx); im.setColorAt(i,col.set(b[6]).convertSRGBToLinear()); });
+      im.castShadow=k!=="glass"&&k!=="glow"; im.receiveShadow=k!=="glow"; g.add(im); }); }}; }
+  /* furniture kit. Every piece is built from boxes in one instanced mesh per floor (cheap to draw).
+     `face` is the direction the front of a piece looks: "n" (−z), "s" (+z), "e" (+x), "w" (−x). */
+  const FACE={n:[0,-1],s:[0,1],e:[1,0],w:[-1,0]};
+  const PF=(ib,x,y,z,face)=>{ face=face||"s"; return (lx,ly,lz,w,h,d,c,mk)=>{ let wx,wz,W=w,D=d;
+      if(face==="s"){ wx=x+lx; wz=z+lz; } else if(face==="n"){ wx=x-lx; wz=z-lz; } else if(face==="e"){ wx=x+lz; wz=z-lx; W=d; D=w; } else { wx=x-lz; wz=z+lx; W=d; D=w; }
+      ib.add(wx,y+ly,wz,W,h,D,c,mk); }; };
+  const SHIRTS=["#2B6CB0","#C0392B","#1C7C43","#7B5BB0","#E2A33B","#F2F2EE"];
   const F={
-    person(ib,x,y,z,shirt){ ib.add(x,y,z,0.34,0.78,0.22,"#2C3E50"); ib.add(x,y+0.78,z,0.44,0.62,0.26,shirt); ib.add(x,y+1.42,z,0.24,0.26,0.24,SKIN[Math.floor(ir()*SKIN.length)]); },
-    seated(ib,x,y,z,shirt){ ib.add(x,y+0.49,z,0.44,0.6,0.26,shirt); ib.add(x,y+1.12,z,0.24,0.26,0.24,SKIN[Math.floor(ir()*SKIN.length)]); },
-    desk(ib,x,y,z,face){ const [dx,dz]={n:[0,-1],s:[0,1],e:[1,0],w:[-1,0]}[face]; const wide=dx===0;
-      ib.add(x,y+0.72,z,wide?1.4:0.7,0.05,wide?0.7:1.4,"#F2F4F3"); ib.add(x-dx*0.3,y,z-dz*0.3,wide?1.3:0.05,0.72,wide?0.05:1.3,"#C9A77C");
-      ib.add(x-dx*0.12,y+0.77,z-dz*0.12,wide?0.5:0.05,0.32,wide?0.05:0.5,"#2C3734");
-      ib.add(x+dx*0.75,y+0.42,z+dz*0.75,0.5,0.07,0.5,"#1F5247"); ib.add(x+dx*0.98,y+0.42,z+dz*0.98,dx?0.06:0.5,0.5,dx?0.5:0.06,"#1F5247"); ib.add(x+dx*0.75,y,z+dz*0.75,0.08,0.42,0.08,"#4A5652"); },
-    chair(ib,x,y,z,c){ ib.add(x,y+0.42,z,0.45,0.07,0.45,c||"#1F5247"); ib.add(x,y,z,0.06,0.42,0.06,"#4A5652"); },
-    bed(ib,x,y,z,hd,blanket){ ib.add(x,y,z,0.95,0.55,2.0,"#C9D1CE"); ib.add(x,y+0.55,z,0.9,0.14,1.9,"#FFFFFF"); ib.add(x,y+0.69,z+hd*0.72,0.6,0.1,0.35,"#F7F7F7");
-      ib.add(x,y+0.69,z-hd*0.2,0.92,0.16,1.3,blanket||"#5B8EC2"); ib.add(x,y+0.72,z+hd*0.55,0.22,0.2,0.22,SKIN[Math.floor(ir()*SKIN.length)]);
-      ib.add(x,y,z+hd*1.02,0.95,1.05,0.06,"#9AA4A0"); ib.add(x+0.8,y,z+hd*0.6,0.45,0.85,0.45,"#E2E8E5"); ib.add(x-0.62,y,z+hd*0.85,0.04,1.9,0.04,"#B9C4C0"); ib.add(x-0.62,y+1.7,z+hd*0.85,0.18,0.25,0.06,"#EAF6FF"); },
-    curtain(ib,x,y,z,len,alongZ){ ib.add(x,y+0.15,z,alongZ?0.03:len,1.9,alongZ?len:0.03,"#9FD3C7"); },
-    counter(ib,x,y,z,w,d,c,top){ ib.add(x,y,z,w,1.0,d,c||"#A9C3BA"); ib.add(x,y+1.0,z,w+0.08,0.05,d+0.08,top||"#F5F7F6"); },
-    table(ib,x,y,z,w,d,c){ ib.add(x,y+0.72,z,w,0.06,d,c||"#C9A77C"); ib.add(x,y,z,Math.max(0.1,w-0.5),0.72,Math.max(0.1,d-0.5),"#8C6A4A"); },
-    chairsAround(ib,x,z,y,w,d,step){ step=step||1; for(let a=x-w/2+0.5;a<=x+w/2-0.4;a+=step){ F.chair(ib,a,y,z-d/2-0.45); F.chair(ib,a,y,z+d/2+0.45); }
-      for(let b=z-d/2+0.5;b<=z+d/2-0.4;b+=step){ F.chair(ib,x-w/2-0.45,y,b); F.chair(ib,x+w/2+0.45,y,b); } },
+    person(){}, seated(){},
+    chair(ib,x,y,z,c,back){ c=c||"#1F5247"; const b=FACE[back||"n"]; const a=PF(ib,x,y,z,{n:"s",s:"n",e:"w",w:"e"}[back||"n"]);
+      [[-0.19,-0.19],[0.19,-0.19],[-0.19,0.19],[0.19,0.19]].forEach(([u,v])=>a(u,0,v,0.035,0.43,0.035,"#3B4A46","metal"));
+      a(0,0.43,0,0.46,0.06,0.44,c); a(0,0.49,-0.2,0.44,0.42,0.05,c); a(-0.19,0.43,-0.2,0.03,0.48,0.03,"#3B4A46","metal"); a(0.19,0.43,-0.2,0.03,0.48,0.03,"#3B4A46","metal"); },
+    office(ib,x,y,z,back,c){ c=c||"#2C3734"; const a=PF(ib,x,y,z,{n:"s",s:"n",e:"w",w:"e"}[back||"n"]);
+      a(0,0.02,0,0.62,0.04,0.06,"#3B4A46","metal"); a(0,0.02,0,0.06,0.04,0.62,"#3B4A46","metal"); [[-0.3,0],[0.3,0],[0,-0.3],[0,0.3]].forEach(([u,v])=>a(u,0,v,0.06,0.05,0.06,"#1A1F21"));
+      a(0,0.06,0,0.06,0.38,0.06,"#8A9492","metal"); a(0,0.44,0,0.5,0.08,0.48,c,"soft"); a(0,0.56,-0.24,0.46,0.55,0.07,c,"soft"); a(0,0.48,-0.22,0.06,0.2,0.04,"#3B4A46","metal");
+      a(-0.27,0.52,0.02,0.05,0.2,0.3,"#3B4A46"); a(0.27,0.52,0.02,0.05,0.2,0.3,"#3B4A46"); a(-0.27,0.71,0.02,0.07,0.03,0.32,c); a(0.27,0.71,0.02,0.07,0.03,0.32,c); },
+    computer(ib,x,y,z,face,scr){ const a=PF(ib,x,y,z,face); a(0,0,0,0.22,0.02,0.18,"#1A1F21"); a(0,0.02,-0.02,0.05,0.18,0.04,"#1A1F21");
+      a(0,0.17,0,0.56,0.34,0.035,"#15191B"); a(0,0.19,0.019,0.5,0.28,0.004,scr||"#7FB6D9","glow"); a(0,-0.0,0.24,0.44,0.02,0.14,"#2A2F31"); a(0.32,0,0.24,0.06,0.02,0.1,"#2A2F31"); },
+    desk(ib,x,y,z,face,opt){ opt=opt||{}; const a=PF(ib,x,y,z,face);   /* the chair is on the `face` side; the desk front looks towards it */
+      const top=opt.top||"#F2F4F3", body=opt.body||"#C9A77C";
+      a(0,0.72,0,1.4,0.04,0.7,top); a(-0.67,0,0,0.04,0.72,0.66,body); a(0,0.3,-0.32,1.3,0.42,0.02,body);
+      a(0.5,0,0.02,0.38,0.68,0.62,body); [0.12,0.34,0.55].forEach(h=>{ a(0.5,h,0.335,0.34,0.005,0.01,"#7D6446"); a(0.5,h+0.1,0.335,0.1,0.015,0.015,"#8A9492","metal"); });
+      F.computer(ib,...(()=>{ const [fx,fz]=FACE[face]; return [x-fx*0.12,y+0.74,z-fz*0.12]; })(),face,opt.scr);
+      a(-0.42,0.74,0.1,0.21,0.02,0.3,"#FFFFFF"); a(-0.4,0.76,0.12,0.21,0.015,0.3,"#F4F1E6"); a(0.45,0.74,-0.05,0.08,0.1,0.08,["#C0392B","#2B6CB0","#F2F2EE"][Math.floor(ir()*3)],"gloss");
+      if(opt.phone!==false){ a(-0.22,0.74,-0.18,0.16,0.05,0.12,"#22282A"); }
+      if(opt.chair!==false){ const [fx,fz]=FACE[face]; F.office(ib,x+fx*0.72,y,z+fz*0.72,face,opt.chairCol); } },
+    bed(ib,x,y,z,hd,blanket){ const a=PF(ib,x,y,z,hd>0?"s":"n");   /* local +z is the head end */
+      [[-0.42,-0.9],[0.42,-0.9],[-0.42,0.9],[0.42,0.9]].forEach(([u,v])=>{ a(u,0,v,0.07,0.1,0.07,"#22282A"); a(u,0.1,v,0.04,0.32,0.04,"#9AA4A0","metal"); });
+      a(0,0.4,0,0.95,0.08,1.95,"#9AA4A0","metal"); a(0,0.48,0,0.9,0.16,1.88,"#EEF2F4"); a(0,0.64,0.68,0.62,0.11,0.36,"#FFFFFF","soft");
+      a(0,0.64,-0.3,0.93,0.06,1.2,blanket||"#5B8EC2","soft"); a(0,0.7,0.2,0.93,0.05,0.25,"#FFFFFF","soft");
+      a(0,0.4,0.99,0.95,0.75,0.05,"#D5DCDF","gloss"); a(0,0.4,-0.99,0.95,0.45,0.05,"#D5DCDF","gloss");
+      [-0.5,0.5].forEach(u=>{ a(u,0.62,0.35,0.03,0.04,0.9,"#9AA4A0","metal"); a(u,0.48,0.35,0.03,0.18,0.03,"#9AA4A0","metal"); });
+      a(0,0.6,-1.04,0.22,0.3,0.02,"#F2F2EE"); a(0,0.88,-1.04,0.08,0.03,0.02,"#8A9492","metal");
+      const s=hd>0?1:-1; F.locker(ib,x+0.82,y,z+s*0.7,hd>0?"w":"w"); F.ivpole(ib,x-0.68,y,z+s*0.8);
+      a(0,1.35,1.03,0.18,0.12,0.05,"#2F9E6E"); a(-0.25,1.35,1.03,0.1,0.08,0.04,"#F2F2EE"); },
+    locker(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0.05,0,0.44,0.78,0.44,"#E2E8E5","gloss"); a(0,0,0,0.4,0.05,0.4,"#9AA4A0"); a(0,0.6,0.222,0.4,0.005,0.005,"#9AA4A0"); a(0,0.68,0.225,0.12,0.02,0.02,"#8A9492","metal");
+      a(0,0.3,0.222,0.36,0.25,0.004,"#D5DCDF"); a(-0.1,0.83,0,0.09,0.2,0.09,"#BFE3EC","glass"); a(0.1,0.83,0.05,0.07,0.1,0.07,"#F2F2EE"); },
+    ivpole(ib,x,y,z){ ib.add(x,y,z,0.36,0.03,0.04,"#3B4A46","metal"); ib.add(x,y,z,0.04,0.03,0.36,"#3B4A46","metal"); ib.add(x,y+0.03,z,0.025,1.85,0.025,"#C4CBCA","metal"); ib.add(x,y+1.86,z,0.3,0.02,0.02,"#C4CBCA","metal");
+      ib.add(x+0.1,y+1.55,z,0.12,0.22,0.04,"#DCEFF7","glass"); ib.add(x+0.1,y+1.0,z,0.008,0.55,0.008,"#DCEFF7","glass"); },
+    curtain(ib,x,y,z,len,alongZ){ const n=Math.max(3,Math.round(len/0.18)); for(let i=0;i<n;i++){ const t=-len/2+(i+0.5)*len/n, wv=(i%2?0.05:0)+0.03;
+        if(alongZ) ib.add(x+(i%2?0.03:-0.02),y+0.25,z+t,wv,1.8,len/n+0.01,"#9FD3C7","soft"); else ib.add(x+t,y+0.25,z+(i%2?0.03:-0.02),len/n+0.01,1.8,wv,"#9FD3C7","soft"); }
+      if(alongZ) ib.add(x,y+2.1,z,0.04,0.04,len,"#B9C4C0","metal"); else ib.add(x,y+2.1,z,len,0.04,0.04,"#B9C4C0","metal"); },
+    counter(ib,x,y,z,w,d,c,top){ ib.add(x,y,z,w-0.1,0.1,d-0.1,"#3B4A46"); ib.add(x,y+0.1,z,w,0.9,d,c||"#A9C3BA"); ib.add(x,y+1.0,z,w+0.08,0.05,d+0.08,top||"#F5F7F6","gloss");
+      const n=Math.max(1,Math.round(w/0.6)); for(let i=1;i<n;i++){ const xx=x-w/2+i*w/n; ib.add(xx,y+0.14,z-d/2-0.003,0.01,0.82,0.01,"#6E7B77"); ib.add(xx,y+0.14,z+d/2+0.003,0.01,0.82,0.01,"#6E7B77"); } },
+    table(ib,x,y,z,w,d,c){ ib.add(x,y+0.71,z,w,0.05,d,c||"#C9A77C","gloss"); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([u,v])=>ib.add(x+u*(w/2-0.1),y,z+v*(d/2-0.1),0.07,0.71,0.07,"#5C4430"));
+      ib.add(x,y+0.6,z-d/2+0.1,w-0.25,0.08,0.03,"#5C4430"); ib.add(x,y+0.6,z+d/2-0.1,w-0.25,0.08,0.03,"#5C4430"); },
+    chairsAround(ib,x,z,y,w,d,step){ step=step||1; for(let a=x-w/2+0.5;a<=x+w/2-0.4;a+=step){ F.chair(ib,a,y,z-d/2-0.45,null,"n"); F.chair(ib,a,y,z+d/2+0.45,null,"s"); }
+      for(let b=z-d/2+0.5;b<=z+d/2-0.4;b+=step){ F.chair(ib,x-w/2-0.45,y,b,null,"w"); F.chair(ib,x+w/2+0.45,y,b,null,"e"); } },
     shelves(ib,x0,x1,z,y,h,levels,alongX,depth,frame){ depth=depth||0.45; const lo=Math.min(x0,x1), len=Math.abs(x1-x0), c=lo+len/2;
-      for(let l=0;l<=levels;l++){ const yy=y+0.1+l*(h-0.1)/levels; if(alongX) ib.add(c,yy,z,len,0.04,depth,frame||"#B9C4C0"); else ib.add(z,yy,c,depth,0.04,len,frame||"#B9C4C0");
-        if(l<levels){ let p=0; const room=(h-0.1)/levels-0.12; while(p<len-0.15){ const w=0.12+ir()*0.18, hh=0.1+ir()*room*0.8; if(p+w>len) break; const pc=PCOL[Math.floor(ir()*PCOL.length)], a=lo+p+w/2;
-            if(alongX) ib.add(a,yy+0.04,z,w,hh,depth*0.8,pc); else ib.add(z,yy+0.04,a,depth*0.8,hh,w,pc); p+=w+0.03; } } }
-      const fc=frame||"#9AA4A0"; if(alongX){ ib.add(lo,y,z,0.05,h+0.1,depth,fc); ib.add(lo+len,y,z,0.05,h+0.1,depth,fc); } else { ib.add(z,y,lo,depth,h+0.1,0.05,fc); ib.add(z,y,lo+len,depth,h+0.1,0.05,fc); } },
-    rack(ib,x0,x1,z,y,levels,lh){ lh=lh||1.3; for(let x=x0;x<=x1+0.01;x+=2.4){ ib.add(x,y,z-0.5,0.08,levels*lh+0.2,0.08,"#2B5FA8"); ib.add(x,y,z+0.5,0.08,levels*lh+0.2,0.08,"#2B5FA8"); }
-      for(let l=0;l<levels;l++){ const yy=y+0.15+l*lh; ib.add((x0+x1)/2,yy,z-0.5,x1-x0,0.1,0.08,"#E07B24"); ib.add((x0+x1)/2,yy,z+0.5,x1-x0,0.1,0.08,"#E07B24");
-        for(let x=x0+0.6;x<x1-0.3;x+=1.2){ ib.add(x,yy+0.1,z,1.0,0.12,0.95,"#9C7B4E"); const n=1+Math.floor(ir()*2); for(let s=0;s<n;s++) ib.add(x,yy+0.22+s*0.42,z,0.9,0.4,0.85,["#C9A77C","#D8BC92","#F2F2EE","#BFD3E6"][Math.floor(ir()*4)]); } } },
-    wall(ib,x,y,z,w,d,h,c){ ib.add(x,y,z,w,h||2.6,d,c||"#E4EAE7"); },
-    forklift(ib,x,y,z){ ib.add(x,y,z,1.2,1.1,2,"#E2A33B"); ib.add(x,y+1.1,z+0.3,1.1,1.0,0.9,"#3B4A46"); ib.add(x,y,z-1.15,0.9,2.6,0.12,"#3B4A46"); ib.add(x-0.3,y+0.1,z-1.7,0.12,0.06,1.0,"#3B4A46"); ib.add(x+0.3,y+0.1,z-1.7,0.12,0.06,1.0,"#3B4A46"); },
-    plant(ib,x,y,z){ ib.add(x,y,z,0.4,0.45,0.4,"#8C6A4A"); ib.add(x,y+0.45,z,0.6,0.8,0.6,"#4E7F45"); }
+      if(alongX) ib.add(c,y,z,len,h+0.1,0.02,"#D5DCDF"); else ib.add(z,y,c,0.02,h+0.1,len,"#D5DCDF");
+      for(let l=0;l<=levels;l++){ const yy=y+0.1+l*(h-0.1)/levels; if(alongX) ib.add(c,yy,z,len,0.04,depth,frame||"#B9C4C0","metal"); else ib.add(z,yy,c,depth,0.04,len,frame||"#B9C4C0","metal");
+        if(l<levels){ let p=0.05; const room=(h-0.1)/levels-0.12; while(p<len-0.15){ const kind=ir(); const w=kind<0.5?0.06+ir()*0.05:0.12+ir()*0.16, hh=kind<0.5?0.1+ir()*0.08:0.08+ir()*room*0.7; if(p+w>len-0.05) break; const pc=PCOL[Math.floor(ir()*PCOL.length)], a=lo+p+w/2;
+            if(alongX) ib.add(a,yy+0.04,z,w,hh,depth*0.7,pc,kind<0.5?"gloss":""); else ib.add(z,yy+0.04,a,depth*0.7,hh,w,pc,kind<0.5?"gloss":""); p+=w+0.025; } } }
+      const fc=frame||"#9AA4A0"; if(alongX){ ib.add(lo,y,z,0.05,h+0.1,depth,fc,"metal"); ib.add(lo+len,y,z,0.05,h+0.1,depth,fc,"metal"); } else { ib.add(z,y,lo,depth,h+0.1,0.05,fc,"metal"); ib.add(z,y,lo+len,depth,h+0.1,0.05,fc,"metal"); } },
+    rack(ib,x0,x1,z,y,levels,lh){ lh=lh||1.3; for(let x=x0;x<=x1+0.01;x+=2.4){ ib.add(x,y,z-0.5,0.08,levels*lh+0.2,0.08,"#2B5FA8","metal"); ib.add(x,y,z+0.5,0.08,levels*lh+0.2,0.08,"#2B5FA8","metal"); ib.add(x,y+0.6,z,0.03,0.03,1.0,"#2B5FA8"); }
+      for(let l=0;l<levels;l++){ const yy=y+0.15+l*lh; ib.add((x0+x1)/2,yy,z-0.5,x1-x0,0.1,0.08,"#E07B24","metal"); ib.add((x0+x1)/2,yy,z+0.5,x1-x0,0.1,0.08,"#E07B24","metal");
+        for(let x=x0+0.6;x<x1-0.3;x+=1.2){ ib.add(x,yy+0.1,z,1.0,0.12,0.95,"#9C7B4E"); const n=1+Math.floor(ir()*2); for(let s=0;s<n;s++){ ib.add(x,yy+0.22+s*0.42,z,0.9,0.4,0.85,["#C9A77C","#D8BC92","#F2F2EE","#BFD3E6"][Math.floor(ir()*4)]); ib.add(x,yy+0.22+s*0.42+0.18,z+0.426,0.5,0.04,0.004,"#B49064"); } } } },
+    wall(ib,x,y,z,w,d,h,c){ ib.add(x,y,z,w,h||2.6,d,c||"#E4EAE7"); ib.add(x,y,z,w+(w<d?0.02:0),0.1,d+(d<w?0.02:0),"#9AA4A0"); },
+    forklift(ib,x,y,z){ ib.add(x,y+0.15,z,1.2,0.95,2,"#E2A33B","gloss"); ib.add(x,y+1.1,z+0.4,1.1,0.06,1.1,"#3B4A46"); [[-0.5,0.5],[0.5,0.5],[-0.5,-0.2],[0.5,-0.2]].forEach(([u,v])=>{ ib.add(x+u*0.95,y+1.1,z+v+0.2,0.06,1.0,0.06,"#3B4A46","metal"); });
+      [[-0.62,0.6],[0.62,0.6],[-0.62,-0.6],[0.62,-0.6]].forEach(([u,v])=>ib.add(x+u,y,z+v,0.18,0.45,0.45,"#1A1F21")); ib.add(x,y+0.85,z+0.55,0.5,0.06,0.45,"#22282A"); ib.add(x,y+1.0,z-0.15,0.4,0.25,0.06,"#22282A");
+      ib.add(x,y,z-1.15,0.9,2.6,0.1,"#3B4A46","metal"); ib.add(x-0.3,y+0.05,z-1.7,0.12,0.06,1.0,"#3B4A46","metal"); ib.add(x+0.3,y+0.05,z-1.7,0.12,0.06,1.0,"#3B4A46","metal"); },
+    plant(ib,x,y,z){ ib.add(x,y,z,0.42,0.42,0.42,"#B9784A","gloss"); ib.add(x,y+0.42,z,0.46,0.04,0.46,"#A3683F"); ib.add(x,y+0.44,z,0.36,0.03,0.36,"#4A3526");
+      [[0,0,0.5,1.0],[0.14,0.1,0.32,0.62],[-0.13,-0.1,0.3,0.7],[0.06,-0.15,0.26,0.8],[-0.1,0.14,0.28,0.55]].forEach(([u,v,s,h],i)=>ib.add(x+u,y+0.46+h*0.25,z+v,s,h*0.75,s,["#3E7A3C","#4E8F45","#2F6B34"][i%3],"soft")); },
+    /* ---- equipment ---- */
+    sink(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.6,0.78,0.5,"#E2E8E5","gloss"); a(0,0.78,0,0.64,0.12,0.54,"#F7F9F8","gloss"); a(0,0.85,0.02,0.44,0.06,0.34,"#C9D3D6","metal");
+      a(0,0.9,-0.2,0.04,0.22,0.04,"#C4CBCA","metal"); a(0,1.1,-0.13,0.04,0.03,0.16,"#C4CBCA","metal"); a(0,1.2,-0.24,0.44,0.5,0.02,"#BFE3EC","glass"); a(0.42,1.0,-0.24,0.12,0.22,0.08,"#F2F2EE","gloss"); a(-0.45,1.05,-0.23,0.26,0.32,0.1,"#F2F4F3"); },
+    sharps(ib,x,y,z){ ib.add(x,y,z,0.26,0.32,0.22,"#F2C230","gloss"); ib.add(x,y+0.32,z,0.27,0.04,0.23,"#C0392B"); },
+    bin(ib,x,y,z,c){ ib.add(x,y,z,0.34,0.52,0.34,c||"#3B4A46","gloss"); ib.add(x,y+0.52,z,0.36,0.04,0.36,c?"#22282A":"#22282A"); ib.add(x,y,z+0.18,0.1,0.03,0.06,"#22282A"); },
+    trolley(ib,x,y,z,face,c){ const a=PF(ib,x,y,z,face); [[-0.3,-0.2],[0.3,-0.2],[-0.3,0.2],[0.3,0.2]].forEach(([u,v])=>a(u,0,v,0.06,0.08,0.06,"#22282A")); a(0,0.08,0,0.7,0.82,0.5,c||"#2B6CB0","gloss");
+      [0.25,0.45,0.65].forEach(h=>a(0,0.08+h,0.251,0.64,0.005,0.01,"#1F4E80")); a(0,0.9,0,0.74,0.04,0.54,"#E2E8E5"); a(-0.2,0.94,0,0.12,0.14,0.1,"#F2F2EE"); a(0.15,0.94,0.05,0.2,0.05,0.14,"#C0392B"); a(0.42,0.6,0,0.03,0.4,0.4,"#8A9492","metal"); },
+    wheelchair(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); [-0.28,0.28].forEach(u=>{ a(u,0,0,0.04,0.6,0.6,"#22282A"); a(u,0.02,0.32,0.05,0.12,0.12,"#22282A"); a(u,0.45,0,0.03,0.03,0.5,"#9AA4A0","metal"); });
+      a(0,0.45,0.02,0.5,0.05,0.46,"#2C3734","soft"); a(0,0.5,-0.22,0.5,0.45,0.04,"#2C3734","soft"); a(0,0.9,-0.27,0.5,0.03,0.03,"#9AA4A0","metal"); a(0,0.12,0.42,0.36,0.03,0.14,"#3B4A46"); },
+    fridge(ib,x,y,z,face,glassDoor,c){ const a=PF(ib,x,y,z,face); a(0,0,0,0.7,1.85,0.7,c||"#F2F4F3","gloss"); a(0.3,0.9,0.36,0.03,0.5,0.04,"#8A9492","metal");
+      if(glassDoor){ a(0,0.15,0.352,0.6,1.55,0.01,"#BFE3EC","glass"); [0.5,0.9,1.3].forEach(h=>{ a(0,h,0.1,0.6,0.02,0.45,"#C9D3D6","metal"); for(let i=0;i<5;i++) a(-0.24+i*0.12,h+0.02,0.1,0.08,0.12,0.08,PCOL[(i+Math.round(h*10))%PCOL.length]); }); a(0,1.7,0.36,0.24,0.08,0.01,"#41F29A","glow"); }
+      else a(0,1.25,0.352,0.66,0.005,0.005,"#9AA4A0"); },
+    filing(ib,x,y,z,face,n){ n=n||4; const a=PF(ib,x,y,z,face); a(0,0,0,0.47,n*0.33,0.62,"#7E8C87","metal"); for(let i=0;i<n;i++){ a(0,0.04+i*0.33,0.312,0.43,0.29,0.004,"#8E9C97","metal"); a(0,0.24+i*0.33,0.318,0.14,0.02,0.02,"#C4CBCA","metal"); a(0,0.29+i*0.33,0.316,0.08,0.03,0.004,"#FFFFFF"); } },
+    water(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.32,1.0,0.32,"#F2F4F3","gloss"); a(0,1.0,0,0.27,0.42,0.27,"#9FD3E7","glass"); a(-0.07,0.75,0.165,0.04,0.05,0.04,"#C0392B"); a(0.07,0.75,0.165,0.04,0.05,0.04,"#2B6CB0"); a(0,0.55,0.15,0.18,0.02,0.1,"#9AA4A0"); },
+    couch(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.65,0.62,1.85,"#E2E8E5","gloss"); a(0,0.62,0,0.66,0.1,1.85,"#2F7A69","soft"); a(0,0.72,0.55,0.66,0.12,0.75,"#2F7A69","soft"); a(0,0.73,-0.1,0.5,0.005,1.1,"#FFFFFF");
+      a(0,0.6,-0.98,0.1,0.18,0.1,"#F2F2EE"); a(0.55,0,-0.6,0.4,0.22,0.3,"#9AA4A0","metal"); },
+    scale(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.4,0.08,0.45,"#E2E8E5"); a(0,0.08,-0.2,0.04,1.4,0.04,"#C4CBCA","metal"); a(0,1.42,-0.18,0.24,0.18,0.08,"#F2F4F3"); a(0,1.45,-0.135,0.18,0.1,0.004,"#41F29A","glow"); a(0,1.85,-0.2,0.02,0.4,0.02,"#C4CBCA","metal"); a(0,2.0,-0.08,0.22,0.02,0.22,"#C4CBCA","metal"); },
+    bpstand(ib,x,y,z){ ib.add(x,y,z,0.42,0.04,0.04,"#3B4A46"); ib.add(x,y,z,0.04,0.04,0.42,"#3B4A46"); ib.add(x,y+0.04,z,0.03,1.1,0.03,"#C4CBCA","metal"); ib.add(x,y+1.14,z,0.2,0.14,0.12,"#F2F4F3","gloss"); ib.add(x,y+1.17,z+0.062,0.12,0.07,0.004,"#C9D8C2","glow"); ib.add(x+0.14,y+1.0,z,0.12,0.12,0.06,"#1F3A5F"); },
+    sofa(ib,x,y,z,face,c,len){ len=len||1.9; c=c||"#4E5D7A"; const a=PF(ib,x,y,z,face); a(0,0.05,0,len,0.38,0.85,c,"soft"); a(0,0.43,0.04,len-0.3,0.12,0.7,c,"soft"); a(0,0.05,-0.33,len,0.82,0.2,c,"soft");
+      a(-len/2+0.1,0.05,0.02,0.2,0.62,0.85,c,"soft"); a(len/2-0.1,0.05,0.02,0.2,0.62,0.85,c,"soft"); [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([u,v])=>a(u*(len/2-0.1),0,v*0.35,0.06,0.05,0.06,"#22282A"));
+      a(-len/4,0.55,0.0,0.4,0.36,0.12,"#E2A33B","soft"); },
+    tv(ib,x,y,z,face,h){ const a=PF(ib,x,y,z,face); a(0,(h||1.6),0,1.2,0.7,0.05,"#15191B"); a(0,(h||1.6)+0.04,0.027,1.12,0.62,0.004,"#2F6B9A","glow"); },
+    board(ib,x,y,z,face,w,c){ w=w||1.4; const a=PF(ib,x,y,z,face); a(0,1.0,0,w,1.0,0.03,c||"#B88A5A"); a(0,1.03,0.016,w-0.08,0.94,0.004,c==="#FFFFFF"?"#FFFFFF":"#C9A170");
+      if(c!=="#FFFFFF") for(let i=0;i<5;i++) a(-w/2+0.2+i*(w-0.3)/4,1.3+(i%2)*0.3,0.02,0.22,0.28,0.004,["#FFFFFF","#F2E6A0","#BFE3EC","#FFFFFF","#F6C9C0"][i]); else a(0,1.0,0.03,w,0.04,0.06,"#9AA4A0"); },
+    extinguisher(ib,x,y,z){ ib.add(x,y+0.4,z,0.16,0.55,0.16,"#C0392B","gloss"); ib.add(x,y+0.95,z,0.06,0.08,0.06,"#22282A"); ib.add(x+0.06,y+0.9,z,0.12,0.03,0.03,"#22282A"); ib.add(x,y+1.25,z,0.3,0.3,0.02,"#C0392B"); },
+    microscope(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.2,0.04,0.26,"#F2F4F3"); a(0,0.04,-0.08,0.06,0.3,0.06,"#F2F4F3"); a(0,0.14,0.02,0.16,0.02,0.14,"#22282A"); a(0,0.26,-0.02,0.06,0.12,0.12,"#F2F4F3"); a(0,0.36,0.02,0.035,0.1,0.035,"#22282A"); a(0,0.2,0.06,0.025,0.06,0.025,"#C4CBCA","metal"); },
+    centrifuge(ib,x,y,z){ ib.add(x,y,z,0.42,0.3,0.42,"#F2F4F3","gloss"); ib.add(x,y+0.3,z,0.38,0.02,0.38,"#BFE3EC","glass"); ib.add(x,y+0.08,z+0.212,0.16,0.08,0.004,"#41F29A","glow"); },
+    printer(ib,x,y,z,face,big){ const a=PF(ib,x,y,z,face); if(big){ a(0,0,0,0.6,0.85,0.6,"#E2E8E5"); a(0,0.85,0,0.6,0.2,0.6,"#C9D1CE"); a(0.15,1.05,0.15,0.2,0.02,0.15,"#2C3734","glow"); a(0,0.4,0.302,0.5,0.005,0.005,"#9AA4A0"); }
+      else { a(0,0,0,0.42,0.22,0.36,"#2C3734"); a(0,0.22,-0.05,0.3,0.06,0.2,"#F4F1E6"); } },
+    till(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,0.38,0.1,0.34,"#2C3734"); a(0,0.1,-0.06,0.3,0.22,0.03,"#15191B"); a(0,0.12,-0.044,0.26,0.16,0.004,"#7FB6D9","glow"); a(0.25,0,0.05,0.1,0.05,0.14,"#2C3734"); },
+    pallet(ib,x,y,z,h,c){ ib.add(x,y,z,1.2,0.14,1.0,"#9C7B4E"); if(h) ib.add(x,y+0.14,z,1.12,h,0.95,c||"#D8BC92"); if(h) ib.add(x,y+0.14,z,1.13,h*0.98,0.96,"#E6EEF2","glass"); },
+    jack(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(-0.2,0,0.6,0.16,0.08,1.1,"#C0392B","gloss"); a(0.2,0,0.6,0.16,0.08,1.1,"#C0392B","gloss"); a(0,0,0,0.6,0.3,0.2,"#C0392B","gloss"); a(0,0.3,-0.05,0.05,0.9,0.05,"#22282A"); a(0,1.18,-0.05,0.3,0.04,0.04,"#22282A"); },
+    rug(ib,x,y,z,w,d,c){ ib.add(x,y,z,w,0.012,d,c||"#8E3B2F","soft"); ib.add(x,y,z,w-0.2,0.014,d-0.2,"#C9A170","soft"); ib.add(x,y,z,w-0.5,0.016,d-0.5,c||"#8E3B2F","soft"); },
+    bench(ib,x,y,z,len,alongX){ if(alongX){ ib.add(x,y+0.42,z,len,0.05,0.36,"#B9875A"); for(const u of [-len/2+0.15,len/2-0.15]) ib.add(x+u,y,z,0.06,0.42,0.32,"#3B4A46","metal"); } else { ib.add(x,y+0.42,z,0.36,0.05,len,"#B9875A"); for(const u of [-len/2+0.15,len/2-0.15]) ib.add(x,y,z+u,0.32,0.42,0.06,"#3B4A46","metal"); } },
+    hood(ib,x,y,z,face){ const a=PF(ib,x,y,z,face); a(0,0,0,1.5,0.9,0.75,"#D5DCDF"); a(0,0.9,0,1.5,0.06,0.75,"#3E4B4E"); a(-0.72,0.96,0,0.06,1.0,0.75,"#E8EEF0"); a(0.72,0.96,0,0.06,1.0,0.75,"#E8EEF0"); a(0,1.96,0,1.5,0.5,0.75,"#E8EEF0"); a(0,1.2,0.37,1.38,0.75,0.01,"#BFE3EC","glass"); a(0,1.98,0.38,0.6,0.08,0.004,"#41F29A","glow"); }
   };
   function cylG(g,r,h,mat,x,y,z,rz){ const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,20),mat); m.position.set(x,y+(rz?0:h/2),z); if(rz){ m.rotation.z=Math.PI/2; m.position.y=y; } m.castShadow=true; m.receiveShadow=true; g.add(m); return m; }
   function glassG(g,x0,x1,z0,z1,y,h){ const m=new THREE.Mesh(unit,SMAT({color:0xBFE3EC,transparent:true,opacity:.22,roughness:.1,depthWrite:false})); m.scale.set(x1-x0,h,z1-z0); m.position.set((x0+x1)/2,y+h/2,(z0+z1)/2); g.add(m); return m; }
@@ -9979,7 +10074,8 @@ function initScene(){
       if(c.glass===true&&!(c.noGlass&&c.noGlass(f))){ const gl=new THREE.Mesh(unit,mGlassBox); gl.scale.set(w-0.02,c.fh-0.22,d-0.02); gl.position.set(cx,y0+0.2+(c.fh-0.22)/2,cz); gl.renderOrder=2; fg.add(gl); }
       c.fill(ib,f,y0+0.2,fg); ib.build(fg); }
     const sz=Math.max(w,d,c.floors*c.fh);
-    OPEN.push({g,shells:c.shells.filter(Boolean),cx,cz,hw:w/2,hd:d/2,R:Math.max(46,sz*1.8),op:false,top:(c.y0||0)+c.floors*c.fh}); return g; }
+    const _rc=(c.shells&&c.shells[0]&&c.shells[0].material&&c.shells[0].material[2]&&c.shells[0].material[2].color)?c.shells[0].material[2].color:null; const _rf=keepRoof(c.x0,c.x1,c.z0,c.z1,(c.y0||0)+c.floors*c.fh,_rc,Math.max(w,d)>=14);
+    OPEN.push({g,shells:c.shells.filter(Boolean),cx,cz,hw:w/2,hd:d/2,R:Math.max(46,sz*1.8),op:false,top:(c.y0||0)+c.floors*c.fh,roof:_rf.g,roofMats:_rf.mats,roofMeshes:_rf.meshes}); return g; }
 
   /* ---- Ward block: 3 wards ---- */
   openBuilding({x0:16,x1:44,z0:-8,z1:12,floors:3,fh:3.6,shells:[wardShell],hot:{hospital:"wards"},fill(ib,f,y){
@@ -9989,7 +10085,11 @@ function initScene(){
     ib.add(39.6,y,3.6,0.9,0.95,0.6,"#2B6CB0"); ib.add(39.6,y+0.95,3.6,0.95,0.06,0.65,"#E2E8E5");
     F.shelves(ib,-4.5,-0.5,43.55,y,2.0,4,false,0.45);
     F.person(ib,40.6,y,2.0,"#2B6CB0"); F.person(ib,26,y,1.6,"#2B6CB0"); F.person(ib,31,y,2.6,"#F2F2EE"); F.person(ib,35,y,1.9,"#1F8A8A");
-    F.wall(ib,17.2,y,-3.5,2.4,0.12,2.6); F.wall(ib,17.2,y,6.5,2.4,0.12,2.6); }});
+    F.wall(ib,17.2,y,-3.5,2.4,0.12,2.6); F.wall(ib,17.2,y,6.5,2.4,0.12,2.6);
+    F.computer(ib,41.3,y+1.05,1.4,"w"); F.computer(ib,41.3,y+1.05,2.7,"w"); F.office(ib,40.6,y,1.6,"w"); F.office(ib,40.6,y,2.8,"w"); F.printer(ib,41.6,y+1.05,3.5,"w");
+    F.trolley(ib,37.2,y,2.0,"e","#2B6CB0"); F.trolley(ib,36.2,y,0.8,"e","#C0392B"); F.wheelchair(ib,18.6,y,1.4,"e"); F.wheelchair(ib,18.6,y,2.4,"e");
+    [22.3,31.3].forEach(x=>{ F.sink(ib,x,y,-7.55,"s"); F.sink(ib,x,y,11.55,"n"); }); [26.8,35.8].forEach(x=>{ F.sharps(ib,x,y+1.0,-7.7); F.bin(ib,x+0.5,y,-7.6,"#F2C230"); F.bin(ib,x+0.5,y,11.6,"#22282A"); });
+    F.board(ib,43.9,y,6.5,"w",1.6); F.extinguisher(ib,43.85,y,9.5); F.water(ib,43.6,y,-1.8,"w"); F.fridge(ib,43.55,y,-3.0,"w",true); F.filing(ib,43.6,y,4.6,"w",3); }});
   /* ---- OPD & Emergency ---- */
   openBuilding({x0:-44,x1:-16,z0:-8,z1:12,floors:2,fh:3.6,shells:[opdShell],hot:{hospital:"opd_em"},fill(ib,f,y){
     if(f===0){
@@ -9998,12 +10098,15 @@ function initScene(){
       ib.add(-43.3,y,4,0.5,1.5,0.5,"#2C3734"); ib.add(-43.3,y+1.5,4,0.4,0.35,0.1,"#41F29A");
       F.counter(ib,-35,y,2,1.0,3.6,"#C0392B"); F.person(ib,-35.9,y,2.5,"#2B6CB0"); F.person(ib,-39,y,-4.4,"#F2F2EE");
       F.wall(ib,-32,y,-4.5,0.15,7,3.3); F.wall(ib,-32,y,8.5,0.15,7,3.3);
-      for(let x=-29;x<=-21;x+=1) [-0.5,1,2.5].forEach(z=>{ F.chair(ib,x,y,z,"#2F7A69"); if(ir()<0.4) F.seated(ib,x,y,z,PCOL[Math.floor(ir()*5)]); });
-      F.desk(ib,-18,y,-1,"w"); F.person(ib,-17.3,y,-1,"#2B6CB0"); F.counter(ib,-18,y,7,1,4,"#A9C3BA"); F.shelves(ib,5,9.5,-16.4,y,2.2,5,false,0.4);
-      [-30,-25,-20].forEach(x=>F.wall(ib,x,y,-5.5,0.12,5,2.6)); [-27.5,-22.5].forEach(cx=>{ F.desk(ib,cx,y,-6.8,"s"); ib.add(cx+1.4,y,-4.6,0.8,0.6,1.9,"#3E7C8C"); });
+      for(let x=-29;x<=-21;x+=1) [-0.5,1,2.5].forEach(z=>F.chair(ib,x,y,z,"#2F7A69","s"));
+      F.desk(ib,-18,y,-1,"e"); F.counter(ib,-18,y,7,1,4,"#A9C3BA"); F.shelves(ib,5,9.5,-16.4,y,2.2,5,false,0.4);
+      [-30,-25,-20].forEach(x=>F.wall(ib,x,y,-5.5,0.12,5,2.6)); [-27.5,-22.5].forEach(cx=>{ F.desk(ib,cx,y,-6.8,"s"); F.couch(ib,cx+1.6,y,-5.6,"w"); F.chair(ib,cx-0.6,y,-5.4,"#2F7A69","s"); F.sink(ib,cx-1.8,y,-7.6,"s"); F.bin(ib,cx+0.4,y,-7.6,"#22282A"); });
+      F.tv(ib,-25,y,-3.1,"s"); F.water(ib,-30.6,y,4.6,"e"); F.scale(ib,-31.2,y,-2.6,"e"); F.bpstand(ib,-31.2,y,-1.4); F.board(ib,-21,y,11.85,"n",1.8); F.extinguisher(ib,-16.3,y,4.5);
+      F.trolley(ib,-39,y,1.8,"s","#C0392B"); F.wheelchair(ib,-42.8,y,9.6,"n"); F.wheelchair(ib,-41.8,y,9.6,"n"); F.sharps(ib,-43.6,y+1.0,0.8); F.sink(ib,-43.55,y,6.5,"e"); [-41,-37].forEach(x=>{ F.ivpole(ib,x-0.7,y,-4.8); F.ivpole(ib,x-0.7,y,7.8); });
     } else {
       [-41,-35,-29,-23].forEach(cx=>{ F.wall(ib,cx+3,y,-5.5,0.12,5,2.6); F.wall(ib,cx+3,y,9.5,0.12,5,2.6); F.desk(ib,cx,y,-6.8,"s"); ib.add(cx+1.4,y,-4.6,0.8,0.6,1.9,"#3E7C8C"); F.desk(ib,cx,y,10.8,"n"); ib.add(cx+1.4,y,8.6,0.8,0.6,1.9,"#3E7C8C"); F.person(ib,cx,y,-5.9,"#F2F2EE"); });
-      for(let x=-40;x<=-20;x+=4) F.chair(ib,x,y,2,"#2F7A69"); F.plant(ib,-17,y,2); }
+      for(let x=-40;x<=-20;x+=4) F.chair(ib,x,y,2,"#2F7A69","s"); F.plant(ib,-17,y,2); [-41,-35,-29,-23].forEach(cx=>{ F.couch(ib,cx+1.6,y,-5.9,"w"); F.couch(ib,cx+1.6,y,9.9,"w"); F.chair(ib,cx-0.7,y,-5.4,"#2F7A69","s"); F.chair(ib,cx-0.7,y,9.4,"#2F7A69","n"); F.sink(ib,cx-2.2,y,-7.6,"s"); });
+      F.water(ib,-16.6,y,0.6,"w"); F.board(ib,-30,y,4.2,"s",1.6); F.extinguisher(ib,-43.8,y,2); }
   }});
   /* ---- Administration tower: 6 furnished floors ---- */
   const AFL=["estates","admin1","fin","dir","ceo","board"];
@@ -10011,22 +10114,24 @@ function initScene(){
     floorHot:f=>f===5?null:(f===1?{hospital:"admin1",records:"patient_folder"}:{hospital:AFL[f]}),
     fill(ib,f,y,fg){
       if(f===0){ F.counter(ib,-33,y,-23.6,6,0.8,"#2F7A69"); F.person(ib,-34,y,-24.4,"#2F7A69"); F.person(ib,-32,y,-24.4,"#2F7A69");
-        F.desk(ib,-38,y,-24.2,"n"); F.person(ib,-38,y,-25.1,"#10221D"); for(let x=-38;x<=-31;x+=1) F.chair(ib,x,y,-27,"#2F7A69");
+        F.computer(ib,-34,y+1.05,-23.5,"n"); F.computer(ib,-32,y+1.05,-23.5,"n"); F.office(ib,-34,y,-22.95,"s"); F.office(ib,-32,y,-22.95,"s");
+        F.desk(ib,-38,y,-24.2,"n"); for(let x=-38;x<=-31;x+=1) F.chair(ib,x,y,-27,"#2F7A69","n"); F.water(ib,-30.4,y,-27,"w"); F.plant(ib,-39.4,y,-23); F.board(ib,-39.85,y,-30,"e",1.6); F.extinguisher(ib,-39.8,y,-34.5);
         F.wall(ib,-29.5,y,-33.2,0.15,9.6,2.8); ib.add(-26.5,y,-36.8,5,0.9,1,"#8C6A4A"); [-28,-27,-25.5].forEach(x=>ib.add(x,y+0.9,-36.8,0.4,0.25,0.3,["#C0392B","#2B6CB0","#E2A33B"][Math.floor(ir()*3)]));
         F.shelves(ib,-29,-24.5,-37.6,y,2.2,4,true,0.35,"#7E8C87"); ib.add(-25,y,-31.5,0.8,1.8,0.7,"#FFFFFF"); ib.add(-25.6,y,-31.5,0.02,1.0,0.5,"#9AA4A0"); F.person(ib,-26.2,y,-33,"#E07B24"); }
-      if(f===1){ [[-38,-35,"s"],[-35,-35,"s"],[-38,-30,"n"],[-35,-30,"n"]].forEach(([x,z,fc])=>{ F.desk(ib,x,y,z,fc); F.seated(ib,x,y,z+(fc==="s"?0.75:-0.75),"#7B5BB0"); });
+      if(f===1){ [[-38,-35,"s"],[-35,-35,"s"],[-38,-30,"n"],[-35,-30,"n"]].forEach(([x,z,fc])=>F.desk(ib,x,y,z,fc)); F.filing(ib,-39.6,y,-33,"e"); F.filing(ib,-39.6,y,-32.4,"e"); F.printer(ib,-39.5,y,-27.5,"e",true); F.water(ib,-23.9+-0.5,y,-37,"w");
         [-31,-29,-27,-25].forEach(x=>F.shelves(ib,-37,-25.5,x,y,2.4,5,false,0.5)); F.counter(ib,-28,y,-23.4,5,0.6,"#A9C3BA"); F.person(ib,-28,y,-24.2,"#2F7A69"); }
-      if(f===2){ [-37,-33,-29,-25.6].forEach(x=>[-35,-30.5,-26].forEach(z=>{ F.desk(ib,x,y,z,"s"); if(ir()<0.6) F.seated(ib,x,y,z+0.75,PCOL[Math.floor(ir()*5)]); })); ib.add(-39.2,y,-37.2,0.9,1.2,0.9,"#3B4A46"); }
-      if(f===3){ [-34.7,-29.3].forEach(x=>F.wall(ib,x,y,-34.5,0.12,7,2.8)); [[-37.4,-36],[-32,-36],[-26.7,-36]].forEach(([x,z],i)=>{ F.desk(ib,x,y,z,"s"); F.chair(ib,x-0.5,y,z+1.7); F.chair(ib,x+0.5,y,z+1.7); F.shelves(ib,x-2,x+2,-37.65,y,2.0,3,true,0.3); F.seated(ib,x,y,z-0.4,["#10221D","#2B6CB0","#7B5BB0"][i]); });
+      if(f===2){ [-37,-33,-29,-25.6].forEach(x=>[-35,-30.5,-26].forEach(z=>F.desk(ib,x,y,z,"s"))); ib.add(-39.2,y,-37.2,0.9,1.2,0.9,"#3B4A46","metal"); ib.add(-39.2,y+0.5,-36.74,0.12,0.12,0.02,"#C4CBCA","metal");
+        F.filing(ib,-24.6,y,-37.4,"w"); F.filing(ib,-24.6,y,-36.8,"w"); F.printer(ib,-39.4,y,-24,"e",true); F.water(ib,-24.6,y,-23,"w"); F.plant(ib,-39.4,y,-30); }
+      if(f===3){ [-34.7,-29.3].forEach(x=>F.wall(ib,x,y,-34.5,0.12,7,2.8)); [[-37.4,-36],[-32,-36],[-26.7,-36]].forEach(([x,z],i)=>{ F.desk(ib,x,y,z,"n",{body:"#6B4226",top:"#7A5233",chairCol:"#10221D"}); F.chair(ib,x-0.5,y,z+1.7,"#7A2E2E","s"); F.chair(ib,x+0.5,y,z+1.7,"#7A2E2E","s"); F.rug(ib,x,y,z+1.2,2.2,1.6,"#7A2E2E"); F.shelves(ib,x-2,x+2,-37.65,y,2.0,3,true,0.3); F.seated(ib,x,y,z-0.4,["#10221D","#2B6CB0","#7B5BB0"][i]); });
         F.wall(ib,-37.5,y,-31,4.6,0.12,2.8); F.wall(ib,-32,y,-31,3.6,0.12,2.8); F.wall(ib,-26.5,y,-31,4.6,0.12,2.8); [-38,-30,-25.5].forEach(x=>F.plant(ib,x,y,-23)); }
-      if(f===4){ ib.add(-32,y+0.72,-35.3,2.8,0.08,1.2,"#6B4226"); ib.add(-32,y,-35.3,2.4,0.72,0.8,"#4A3020"); F.seated(ib,-32,y,-36.4,"#10221D"); F.chair(ib,-32,y,-36.4,"#10221D");
-        ib.add(-38.4,y,-27,0.9,0.75,2.8,"#7B5BB0"); ib.add(-36.4,y,-28.8,2.4,0.75,0.9,"#7B5BB0"); ib.add(-36.6,y,-26.8,1.2,0.4,1.2,"#C9A77C");
-        F.table(ib,-27,y,-27,3,1.4,"#6B4226"); F.chairsAround(ib,-27,-27,y,3,1.4,1); F.desk(ib,-31,y,-24.3,"n"); F.shelves(ib,-30,-25,-37.6,y,2.2,4,true,0.35); }
+      if(f===4){ ib.add(-32,y+0.72,-35.3,2.8,0.08,1.2,"#6B4226","gloss"); ib.add(-32,y,-35.3,2.4,0.72,0.8,"#4A3020"); F.office(ib,-32,y,-36.4,"n","#10221D"); F.computer(ib,-31.4,y+0.8,-35.5,"s"); ib.add(-32.6,y+0.8,-35.2,0.3,0.03,0.22,"#F4F1E6"); F.chair(ib,-32.6,y,-34.2,"#7A2E2E","s"); F.chair(ib,-31.4,y,-34.2,"#7A2E2E","s");
+        F.sofa(ib,-38.6,y,-27,"e","#5B4A7A",2.6); F.sofa(ib,-36.2,y,-29.2,"s","#5B4A7A",2.0); ib.add(-36.4,y,-26.8,1.2,0.4,1.0,"#6B4226","gloss"); F.rug(ib,-36.6,y,-27,3.4,3.2,"#2F3D5C"); F.plant(ib,-39.4,y,-23.4); F.tv(ib,-39.9,y,-27,"e",1.5);
+        F.table(ib,-27,y,-27,3,1.4,"#6B4226"); F.chairsAround(ib,-27,-27,y,3,1.4,1); F.desk(ib,-31,y,-24.3,"n"); F.shelves(ib,-30,-25,-37.6,y,2.2,4,true,0.35); F.water(ib,-24.6,y,-31,"w"); F.board(ib,-24.15,y,-27,"w",1.8,"#FFFFFF"); }
       if(f===5){ const gB=new THREE.Group(), gC=new THREE.Group(); tagHot(gB,{hospital:"board"}); tagHot(gC,{hospital:"committee"}); fg.add(gB); fg.add(gC);
         const iB=makeIB(), iC=makeIB();
-        F.table(iB,-36,y,-30,1.8,8,"#6B4226"); for(let z=-33.4;z<=-26.6;z+=1.1){ F.chair(iB,-37.4,y,z,"#10221D"); F.chair(iB,-34.6,y,z,"#10221D"); if(ir()<0.5) F.seated(iB,-37.4,y,z,"#10221D"); }
+        F.table(iB,-36,y,-30,1.8,8,"#6B4226"); for(let z=-33.4;z<=-26.6;z+=1.1){ F.office(iB,-37.4,y,z,"w","#10221D"); F.office(iB,-34.6,y,z,"e","#10221D"); iB.add(-36.55,y+0.76,z,0.24,0.01,0.3,"#FFFFFF"); iB.add(-35.45,y+0.76,z,0.24,0.01,0.3,"#FFFFFF"); } F.office(iB,-36,y,-34.4,"n","#10221D"); F.rug(iB,-36,y,-30,3.6,9.4,"#3B2E5A"); iB.add(-36,y+0.76,-31,0.3,0.25,0.1,"#4B2E83");
         iB.add(-39.7,y+0.9,-30,0.08,1.3,2.4,"#10221D"); F.wall(iB,-32,y,-33,0.15,9.6,3.0,"#D7DFDB");
-        F.table(iC,-28,y,-30,3.2,3.2,"#C9A77C"); F.chairsAround(iC,-28,-30,y,3.2,3.2,1.1); iC.add(-24.4,y,-34,0.1,1.6,1.0,"#FFFFFF"); F.seated(iC,-29.6,y,-31.2,"#F2F2EE"); F.seated(iC,-26.4,y,-28.8,"#2B6CB0");
+        F.table(iC,-28,y,-30,3.2,3.2,"#C9A77C"); F.chairsAround(iC,-28,-30,y,3.2,3.2,1.1); iC.add(-24.4,y,-34,0.1,1.6,1.0,"#FFFFFF"); F.water(iC,-24.6,y,-25,"w"); F.plant(iC,-31.2,y,-22.8);
         iB.build(gB); iC.build(gC);
         const gl1=new THREE.Mesh(unit,mGlassBox); gl1.scale.set(7.98,3.18,15.98); gl1.position.set(-36,y+1.6,-30); gB.add(gl1);
         const gl2=new THREE.Mesh(unit,mGlassBox); gl2.scale.set(7.98,3.18,15.98); gl2.position.set(-28,y+1.6,-30); gC.add(gl2); }
@@ -10035,14 +10140,18 @@ function initScene(){
   openBuilding({x0:-12,x1:6,z0:-38,z1:-24,floors:2,fh:3.6,shells:[diaShell],hot:{hospital:"diagnostics"},fill(ib,f,y,fg){
     if(f===0){ F.counter(ib,-7.5,y,-37.3,8.6,0.9,"#E8EEF0"); [-11,-9,-6,-4.5].forEach(x=>ib.add(x,y+1.05,-37.3,0.9,0.7,0.7,"#F2F4F3"));
       F.counter(ib,-7.5,y,-31,6,1.2,"#E8EEF0"); [-9.5,-7.5,-5.5].forEach(x=>{ ib.add(x,y+1.05,-31,0.25,0.4,0.3,"#2C3734"); ib.add(x,y+1.45,-31.1,0.08,0.2,0.08,"#2C3734"); });
-      ib.add(-11.4,y,-27,0.8,1.9,0.8,"#FFFFFF"); F.counter(ib,-7,y,-24.8,4,0.6,"#2F7A69"); F.person(ib,-8,y,-29.8,"#F2F2EE"); F.person(ib,-6,y,-35.9,"#F2F2EE");
+      F.fridge(ib,-11.4,y,-27,"e",true,"#FFFFFF"); F.counter(ib,-7,y,-24.8,4,0.6,"#2F7A69"); F.computer(ib,-7.6,y+1.05,-24.8,"s"); F.office(ib,-7.6,y,-25.6,"n");
+      [-10.5,-8.8].forEach(x=>F.microscope(ib,x,y+1.05,-31.4,"s")); F.centrifuge(ib,-5.2,y+1.05,-37.3); F.centrifuge(ib,-4.4,y+1.05,-37.3); F.hood(ib,-4.2,y,-29.4,"w"); F.sink(ib,-11.5,y,-35,"e"); F.sharps(ib,-11.5,y+1.0,-33.6); F.bin(ib,-11.5,y,-32.8,"#F2C230");
+      [-10.5,-8.8,-6.5].forEach(x=>F.office(ib,x,y,-30.2,"s")); F.chair(ib,-9,y,-25.2,"#2F7A69","n"); F.chair(ib,-8.3,y,-25.2,"#2F7A69","n"); F.extinguisher(ib,-11.8,y,-24.6);
       F.wall(ib,-3,y,-34,0.2,8,3.3);
       const ct=new THREE.Mesh(new THREE.TorusGeometry(1.1,0.45,12,32),M(0xF2F4F3)); ct.position.set(2.2,y+1.35,-34.2); ct.castShadow=true; fg.add(ct);
-      ib.add(2.2,y,-32.2,0.6,0.85,4.2,"#E2E8E5"); ib.add(2.2,y+0.85,-32.2,0.5,0.08,3.8,"#FFFFFF"); F.desk(ib,4.6,y,-26,"n"); F.person(ib,4.6,y,-25.2,"#2B6CB0");
+      ib.add(2.2,y,-32.2,0.6,0.85,4.2,"#E2E8E5"); ib.add(2.2,y+0.85,-32.2,0.5,0.08,3.8,"#FFFFFF"); F.desk(ib,4.6,y,-26,"s",{scr:"#2A3B4A"}); F.computer(ib,5.3,y+0.74,-26.1,"s","#3A3A3A");
+      F.couch(ib,-1.5,y,-36,"e"); ib.add(4.8,y,-37.2,1.4,1.8,0.25,"#8A9492","metal"); F.wheelchair(ib,4.7,y,-30.4,"w"); F.sign&&0;
       ib.add(-0.6,y,-27.6,0.9,0.8,2.1,"#E2E8E5"); ib.add(-1.7,y,-27.6,0.2,2.7,0.2,"#B9C4C0"); ib.add(-0.9,y+2.05,-27.6,0.7,0.35,0.5,"#F2F4F3"); F.wall(ib,1,y,-28,0.15,6,2.8,"#9AA4A0"); }
     else { for(let x=-11.2;x<=-5;x+=1.05){ ib.add(x,y,-37.4,0.95,1.9,0.7,"#FFFFFF"); ib.add(x,y+0.25,-37.04,0.82,1.45,0.02,"#9FD3E7"); }
-      F.counter(ib,-7,y,-30,6,1.2,"#E8EEF0"); [-9,-7,-5].forEach(x=>ib.add(x,y+1.05,-30,0.6,0.5,0.6,"#F2F4F3")); F.person(ib,-7,y,-28.6,"#C0392B");
-      [[1,-35,"s"],[4,-35,"s"],[1,-27,"n"],[4,-27,"n"]].forEach(([x,z,fc])=>F.desk(ib,x,y,z,fc)); }
+      F.counter(ib,-7,y,-30,6,1.2,"#E8EEF0"); [-9,-7,-5].forEach(x=>ib.add(x,y+1.05,-30,0.6,0.5,0.6,"#F2F4F3")); F.trolley(ib,-3.4,y,-36,"s","#C0392B");
+      [[1,-35,"s"],[4,-35,"s"],[1,-27,"n"],[4,-27,"n"]].forEach(([x,z,fc])=>F.desk(ib,x,y,z,fc)); F.microscope(ib,-9.6,y+1.05,-30.2,"s"); F.microscope(ib,-6.2,y+1.05,-30.2,"s"); F.sink(ib,-11.5,y,-33,"e"); F.fridge(ib,-11.4,y,-25.6,"e",true);
+      F.filing(ib,5.6,y,-31,"w"); F.printer(ib,5.5,y,-29.8,"w",true); F.water(ib,-1.2,y,-24.6,"s"); F.office(ib,-8,y,-29,"n"); F.office(ib,-6,y,-29,"n"); }
   }});
   /* ---- Factory: production hall with four lines + packaging ---- */
   openBuilding({x0:172,x1:202,z0:-42,z1:-16,floors:1,fh:9,shells:[prodShell].concat(prodRoof),hot:{plant:"production"},slab:"#DCE4E7",fill(ib,f,y,g){
@@ -10052,7 +10161,7 @@ function initScene(){
     cylG(g,0.95,1.4,mSS,174.5,y+0.6,-38); ib.add(174.5,y,-38,1.4,0.6,1.4,"#9AA4A0"); cylG(g,0.85,3.4,mSS,177.6,y,-38.2);
     ib.add(174.6,y,-31.2,1.5,1.0,1.3,"#D5DCDF"); cylG(g,0.55,0.5,mSS,174.6,y+1.0,-31.2); ib.add(174.6,y+1.5,-31.2,0.4,0.6,0.4,"#B9C4C0");
     cylG(g,0.85,1.6,mSS,177.4,y+1.3,-27.5,true); ib.add(177.4,y,-27.5,1.6,0.45,1.4,"#9AA4A0");
-    F.person(ib,176,y,-34.5,"#F7F7F7"); F.person(ib,173.4,y,-28.6,"#F7F7F7");
+    F.extinguisher(ib,172.4,y,-36); F.bin(ib,172.6,y,-30,"#2B6CB0"); F.trolley(ib,176.2,y,-34.5,"e","#9AA4A0");
     // liquids
     cylG(g,1.25,3.0,mSS,182.6,y,-37.8); cylG(g,1.0,2.6,mSS,186,y,-37.8); ib.add(184.4,y+0.85,-30.8,5.6,0.1,0.6,"#B9C4C0"); ib.add(184.4,y,-30.8,5.2,0.85,0.4,"#7E8C87");
     for(let x=182;x<=186.8;x+=0.4) ib.add(x,y+0.95,-30.8,0.18,0.32,0.18,"#8A4B12"); ib.add(186.6,y,-29.4,1.0,1.6,1.0,"#D5DCDF"); F.person(ib,183,y,-29.4,"#F7F7F7");
@@ -10069,7 +10178,7 @@ function initScene(){
     ib.add(176.2,y,-19.4,2.4,1.6,1.4,"#D5DCDF"); ib.add(197.6,y,-19.4,2.2,1.5,1.4,"#D5DCDF");
     for(let x=179;x<=195;x+=1.25) ib.add(x,y+0.95,-19.4,0.5,0.32,0.38,"#F2F2EE");
     ib.add(193.6,y+0.95,-18.6,0.3,0.3,0.3,"#FFF3B0"); ib.add(193.95,y+0.95,-18.6,0.3,0.3,0.3,"#FFF3B0");
-    [181,186,191].forEach(x=>F.person(ib,x,y,-18.2,"#F7F7F7"));
+    for(let x=178;x<=196;x+=6) F.pallet(ib,x,y,-16.9,0.9,"#D8BC92"); F.jack(ib,199.2,y,-17.4,"w"); F.extinguisher(ib,201.6,y,-22); F.extinguisher(ib,172.4,y,-22); F.board(ib,201.85,y,-27,"w",1.6); F.sink(ib,194.9,y,-25.4,"n");
   }});
   /* ---- QC laboratory ---- */
   openBuilding({x0:176,x1:198,z0:-6,z1:8,floors:1,fh:5,shells:[qcShell],hot:{plant:"qc"},fill(ib,f,y,g){
@@ -10081,43 +10190,51 @@ function initScene(){
     ib.add(177.2,y,-3,1.0,2.3,2.2,"#E8EEF0"); ib.add(177.72,y+0.9,-3,0.02,1.0,2.0,"#BFE3EC");
     F.shelves(ib,1,7,176.7,y,2.6,6,false,0.55); F.counter(ib,191,y,1.2,4,1.2,"#E8EEF0"); [190,191.5].forEach(x=>{ ib.add(x,y+1.05,1.2,0.25,0.4,0.3,"#2C3734"); });
     ib.add(196.8,y,1,1.0,1.6,1.0,"#F2F4F3"); ib.add(196.8,y,3.2,1.0,1.6,1.0,"#F2F4F3");
-    F.person(ib,182,y,-4.2,"#F7F7F7"); F.person(ib,190,y,2.4,"#F7F7F7"); F.person(ib,187,y,6.2,"#F7F7F7");
+    [180,182.4].forEach(x=>F.microscope(ib,x+3.6,y+1.05,7.2,"n")); F.hood(ib,180,y,7.2,"n"); F.fridge(ib,197.5,y,5.6,"w",true); F.sink(ib,177,y,6.8,"e"); F.computer(ib,191.6,y+1.05,1.2,"s");
+    [181,183.4,185.8,190.5].forEach(x=>F.office(ib,x,y,-4.2,"s")); [185,188,192].forEach(x=>F.office(ib,x,y,6.2,"n")); F.office(ib,191.6,y,2.1,"s"); F.extinguisher(ib,197.8,y,-5.4); F.bin(ib,176.6,y,0.6,"#F2C230"); F.board(ib,197.85,y,-1,"w",1.4,"#FFFFFF");
   }});
   /* ---- Factory office ---- */
   openBuilding({x0:150,x1:164,z0:-4,z1:8,floors:2,fh:3.3,shells:[offShell],hot:{plant:"plant"},fill(ib,f,y){
-    if(f===0){ F.counter(ib,157,y,7.1,4,0.7,"#B7791F"); F.person(ib,157,y,6.3,"#B7791F"); for(let x=152;x<=155;x+=1) F.chair(ib,x,y,5.4);
+    if(f===0){ F.counter(ib,157,y,7.1,4,0.7,"#B7791F"); F.computer(ib,157,y+1.05,7.1,"n"); F.office(ib,157,y,7.8,"s"); for(let x=152;x<=155;x+=1) F.chair(ib,x,y,5.4,"#1C7C43","n"); F.water(ib,150.6,y,4,"e"); F.plant(ib,150.6,y,7.4);
       F.desk(ib,154,y,2,"s"); ib.add(153.6,y+0.77,1.85,0.3,0.28,0.4,"#FFFFFF"); ib.add(154.35,y+0.77,1.85,0.3,0.18,0.4,"#FFFFFF");
-      [[159,-1.5,"s"],[162,-1.5,"s"],[159,2.5,"n"],[162,2.5,"n"]].forEach(([x,z,fc])=>{ F.desk(ib,x,y,z,fc); F.seated(ib,x,y,z+(fc==="s"?0.75:-0.75),"#1C7C43"); }); }
-    else { F.table(ib,154.5,y,-1,4,1.6,"#6B4226"); F.chairsAround(ib,154.5,-1,y,4,1.6,1); F.shelves(ib,158,163,-3.6,y,2.0,4,true,0.4); F.desk(ib,159,y,4,"n"); F.desk(ib,162,y,4,"n"); F.plant(ib,151,y,6.8); }
+      [[159,-1.5,"s"],[162,-1.5,"s"],[159,2.5,"n"],[162,2.5,"n"]].forEach(([x,z,fc])=>F.desk(ib,x,y,z,fc)); F.filing(ib,163.6,y,5.6,"w"); F.printer(ib,163.5,y,4.6,"w",true); F.extinguisher(ib,150.4,y,-3.5); }
+    else { F.table(ib,154.5,y,-1,4,1.6,"#6B4226"); F.chairsAround(ib,154.5,-1,y,4,1.6,1); F.shelves(ib,158,163,-3.6,y,2.0,4,true,0.4); F.desk(ib,159,y,4,"n"); F.desk(ib,162,y,4,"n"); F.plant(ib,151,y,6.8); F.board(ib,150.15,y,-1,"e",1.8,"#FFFFFF"); F.tv(ib,154.5,y,-3.85,"s",1.4); F.water(ib,163.6,y,-3.4,"w"); }
   }});
   /* ---- Dispatch warehouse ---- */
   openBuilding({x0:150,x1:168,z0:-38,z1:-20,floors:1,fh:8,shells:[dispShell],hot:{plant:"dispatch"},fill(ib,f,y){
     F.rack(ib,153,165,-35.5,y,4,1.4); F.rack(ib,153,165,-31.5,y,4,1.4);
     ib.add(164.5,y,-23.6,4,3,4.6,"#FFFFFF"); ib.add(162.48,y,-23.6,0.04,2.2,1.2,"#9FB9CF");
     F.forklift(ib,158.5,y,-26.5); [-35,-29,-23].forEach(z=>{ ib.add(151.7,y,z,1.1,0.13,1.0,"#9C7B4E"); ib.add(151.7,y+0.13,z,1.0,1.0,0.95,"#D8E3E8"); });
-    F.person(ib,156,y,-27.5,"#E2A33B"); F.person(ib,153.4,y,-26,"#E2A33B");
+    for(let z=-35.5;z<=-31.5;z+=4) for(let x=154;x<=164;x+=3) if(ir()<0.6) F.pallet(ib,x,y,z+2,0.6+ir()*0.8,["#D8BC92","#F2F2EE","#BFD3E6"][Math.floor(ir()*3)]);
+    F.jack(ib,155,y,-25.6,"s"); F.jack(ib,161.5,y,-27.6,"w"); F.counter(ib,153.4,y,-21.2,3,0.7,"#7E8C87"); F.computer(ib,153.4,y+1.05,-21.2,"n"); F.office(ib,153.4,y,-20.6,"s"); F.extinguisher(ib,150.4,y,-30); F.extinguisher(ib,167.6,y,-30); F.board(ib,150.15,y,-24,"e",1.6);
   }});
   /* ---- Staff changing block ---- */
   openBuilding({x0:142,x1:148,z0:-16,z1:-10,floors:1,fh:3.4,shells:[chgShell],hot:{plant:"plant"},fill(ib,f,y){
     for(let x=142.6;x<=147.5;x+=0.6) ib.add(x,y,-15.55,0.55,1.9,0.5,"#7E8C87");
     ib.add(145,y,-13.6,4,0.45,0.4,"#C9A77C"); ib.add(145,y,-12.3,5.6,0.02,0.12,"#F4C51F");
     [143.2,145,146.8].forEach(x=>{ ib.add(x,y,-10.45,0.25,0.85,0.25,"#E2E8E5"); ib.add(x,y+0.85,-10.45,0.6,0.15,0.4,"#FFFFFF"); ib.add(x,y+1.4,-10.2,0.12,0.2,0.06,"#C9D1CE"); });
-    for(let z=-14.6;z<=-11.4;z+=0.8) ib.add(142.3,y+0.6,z,0.12,1.1,0.5,"#F7F7F7"); F.person(ib,145.5,y,-11.6,"#F7F7F7");
+    for(let z=-14.6;z<=-11.4;z+=0.8){ ib.add(142.3,y+0.6,z,0.12,1.1,0.5,"#F7F7F7","soft"); ib.add(142.2,y+1.72,z,0.08,0.04,0.04,"#8A9492","metal"); }
+    for(let x=142.6;x<=147.5;x+=0.6){ ib.add(x,y+0.95,-15.29,0.5,0.004,0.02,"#5E6B67"); ib.add(x+0.18,y+1.0,-15.29,0.03,0.08,0.02,"#C4CBCA","metal"); } [143.2,145,146.8].forEach(x=>ib.add(x,y+1.6,-10.2,0.5,0.6,0.02,"#BFE3EC","glass")); F.bin(ib,147.6,y,-11.2,"#2B6CB0"); ib.add(147.85,y+1.2,-13,0.04,0.6,0.4,"#F2F4F3");
   }});
   /* ---- Distribution chain: warehouses, pharmacies, village shop ---- */
   function warehouse(id,x0,x1,z0,z1,h,shell){ openBuilding({x0,x1,z0,z1,floors:1,fh:h,shells:[shell],hot:{outlets:id},fill(ib,f,y){
       const zs=[z0+3.5,z0+7]; zs.forEach(z=>F.rack(ib,x0+2,x1-2,z,y,3,1.4)); F.counter(ib,(x0+x1)/2,y,z0+1.2,6,0.7,"#7B5BB0");
-      F.person(ib,(x0+x1)/2,y,z0+2.0,"#7B5BB0"); F.person(ib,(x0+x1)/2+1.6,y,z0+0.5,"#E2A33B"); F.forklift(ib,x1-3,y,z1-2.5);
+      F.computer(ib,(x0+x1)/2-1.5,y+1.05,z0+1.2,"s"); F.office(ib,(x0+x1)/2-1.5,y,z0+1.9,"n"); F.till(ib,(x0+x1)/2+1,y+1.05,z0+1.2,"s"); F.forklift(ib,x1-3,y,z1-2.5);
+      for(let x=x0+2.5;x<x1-5;x+=2.6) F.pallet(ib,x,y,z1-1.6,0.5+ir()*0.9,["#D8BC92","#F2F2EE","#BFD3E6"][Math.floor(ir()*3)]); F.jack(ib,x0+1.4,y,z0+9.5,"e"); F.extinguisher(ib,x0+0.4,y,z0+2.5); F.extinguisher(ib,x1-0.4,y,z0+2.5); F.board(ib,x0+0.15,y,z0+5.2,"e",1.6);
       if(z1-z0>11){ ib.add(x1-3,y,z1-3.4,4,3,3,"#FFFFFF"); F.desk(ib,x0+3,y,z1-2,"n"); } }}); }
   warehouse("rms",86,104,30,42,6.5,rmsShell); warehouse("whK",122,138,30,40,6,whKShell); warehouse("whA",152,168,30,40,6,whAShell);
   function pharmacy(id,x0,x1,shell){ const cx=(x0+x1)/2; openBuilding({x0,x1,z0:30,z1:36,floors:1,fh:4,shells:[shell],hot:{outlets:id},fill(ib,f,y){
       F.counter(ib,cx,y,33.3,x1-x0-1.4,0.6,"#1C7C43"); F.shelves(ib,x0+0.5,x1-0.5,35.55,y,2.4,5,true,0.4);
       F.shelves(ib,x0+0.8,cx-0.4,31.3,y,1.3,3,true,0.5); ib.add(x1-1.2,y,34.6,1.0,0.9,0.6,"#E8EEF0");
-      F.person(ib,cx+0.5,y,34.3,"#F7F7F7"); F.person(ib,cx+1.3,y,32.2,PCOL[Math.floor(ir()*5)]); F.chair(ib,x1-0.8,y,31,"#2F7A69"); }}); }
+      F.till(ib,cx-1.2,y+1.05,33.3,"n"); F.computer(ib,cx+0.9,y+1.05,33.4,"n"); F.office(ib,cx+0.4,y,34.4,"s"); F.fridge(ib,x1-0.6,y,35.3,"w",true,"#FFFFFF"); F.chair(ib,x1-0.8,y,31,"#2F7A69","s"); F.chair(ib,x1-1.5,y,31,"#2F7A69","s");
+      F.scale(ib,x0+0.6,y,32.4,"e"); F.bpstand(ib,x0+0.6,y,33.4); F.bin(ib,cx+2.4,y,32.6,"#1C7C43"); F.rug(ib,cx,y,31.2,2.2,1.2,"#1C7C43"); F.board(ib,x1-0.15,y,33,"w",1.0); F.extinguisher(ib,x0+0.25,y,35.2); }}); }
   pharmacy("adum",41,49,adumShell); pharmacy("asafo",58,66,asafoShell);
   openBuilding({x0:-27.5,x1:-20.5,z0:37,z1:42,floors:1,fh:3.2,shells:[sellerShell],hot:{outlets:"seller"},fill(ib,f,y){
-    F.counter(ib,-24,y,38.6,5,0.5,"#B7791F"); F.shelves(ib,-27,-21,41.55,y,2.2,4,true,0.4); F.person(ib,-24,y,40,"#B7791F"); F.person(ib,-23,y,37.6,"#3E9A5A"); }});
+    F.counter(ib,-24,y,38.6,5,0.5,"#B7791F"); F.shelves(ib,-27,-21,41.55,y,2.2,4,true,0.4); F.till(ib,-25,y+1.05,38.6,"n"); F.bench(ib,-22.6,y,37.6,1.4,true); ib.add(-20.9,y,40.5,0.5,1.0,0.6,"#E8EEF0","gloss"); ib.add(-20.9,y+1.0,40.5,0.4,0.25,0.5,"#BFE3EC","glass"); F.bin(ib,-27,y,37.6,"#B7791F"); F.board(ib,-27.35,y,39.6,"e",0.9); }});
 
+  /* medical stores: receiving desk, pallets, pallet truck, safety */
+  { const ibS=makeIB(); F.desk(ibS,32.8,0,-19.6,"w"); F.filing(ibS,35.5,0,-19.8,"w"); F.jack(ibS,29.5,0,-16.6,"w"); [[18.5,-16],[21,-16],[23.5,-16]].forEach(([x,z])=>F.pallet(ibS,x,0,z,0.8+ir()*0.6,["#D8BC92","#F2F2EE","#BFD3E6"][Math.floor(ir()*3)]));
+    F.extinguisher(ibS,16.3,0,-20); F.extinguisher(ibS,35.75,0,-27); F.board(ibS,16.15,0,-17.5,"e",1.6); F.bin(ibS,34.8,0,-15,"#2B6CB0"); F.water(ibS,35.6,0,-24.5,"w"); ibS.build(SGs); }
   /* ---------- Delivery truck (player) ---------- */
   const truck=new THREE.Group(); scene.add(truck);
   B(7,2.8,2.5,mWhite,0.6,0.6,0,truck); B(7.02,0.35,2.52,M(0x0D6B5B),0.6,1.6,0,truck);
@@ -10190,7 +10307,9 @@ function initScene(){
     [[-1.5,38.5,2.6],[5.2,38.5,2.6],[11,38.5,2.4],[16,38.6,2.4]].forEach(([x,z,w])=>F.counter(ib,x,y,z,w,0.9,"#BFB6CF","#3E4B4E"));
     F.counter(ib,24.5,y,41,4,1.0,"#A9C3BA","#3E4B4E"); F.shelves(ib,21,28,49.4,y,2.2,4,true,0.4); F.counter(ib,24.5,y,45.6,2.4,1.0,"#BFB6CF","#56676A"); ib.add(24.5,y+1.05,45.2,0.42,0.006,0.3,"#2F6B4F");
     sign2(signTex("SKILLS BENCH",{w:800,h:150,size:80,bg:"#4B2E83"}),1.6,0.3,24.5,2.3,46.2,fg);
-    [-2.2,-0.8,4.5,5.9,10.3,11.7,15.3,16.7,23,26].forEach((x,i)=>F.chair(ib,x,y,i>7?42.1:39.5,"#4B2E83"));
+    [-2.2,-0.8,4.5,5.9,10.3,11.7,15.3,16.7,23,26].forEach((x,i)=>F.chair(ib,x,y,i>7?42.1:39.5,"#4B2E83","s"));
+    F.board(ib,-3.75,y,44,"e",2.6,"#FFFFFF"); F.board(ib,8.15,y,44,"e",2.2,"#FFFFFF"); F.board(ib,19.15,y,44,"e",2.2,"#FFFFFF"); F.sink(ib,6.6,y,46.8,"w"); F.sink(ib,17.6,y,46.8,"w"); F.sink(ib,28.6,y,38.6,"w");
+    F.fridge(ib,28.6,y,46.6,"w",true,"#FFFFFF"); F.hood(ib,13.5,y,49.0,"n"); F.extinguisher(ib,-3.65,y,34); F.extinguisher(ib,29.65,y,34); F.bin(ib,7.4,y,48.8,"#F2C230"); F.bin(ib,18.4,y,48.8,"#2B6CB0"); F.desk(ib,-1.5,y,46.6,"s",{chairCol:"#4B2E83"}); F.desk(ib,10.5,y,46.4,"s",{chairCol:"#4B2E83"});
     F.plant(ib,-3.2,y,31); F.plant(ib,29.2,y,31);
     const top=y+1.05; COLM.top=top;
     /* osmosis: three beakers with a red cell in each */
@@ -10745,9 +10864,10 @@ function initScene(){
     skin(18,0.6,0,3.05,6.34,0,"#F2E8D5"),B(18.5,0.28,19.9,M(0xD8CCB4),0,3.3,-3.25),B(18.5,0.3,0.25,M(0x9E5A3C),0,3.58,6.45)];
   dispSkin[0].material.map.repeat.set(4,1);
   const storeSkin=[skin(20,4.2,26,2.1,-32.03,Math.PI,"#E6DCC6"),skin(20,4.2,26,2.1,-13.97,0,"#E6DCC6"),skin(18,4.2,15.97,2.1,-23,-Math.PI/2,"#E6DCC6"),skin(18,4.2,36.03,2.1,-23,Math.PI/2,"#E6DCC6"),B(20.4,0.3,18.4,M(0xB8C0C4),26,4.3,-23)];
-  OPEN.push({g:new THREE.Group(),shells:dispSkin,cx:0,cz:-3.25,hw:9,hd:9.75,R:60,op:false,top:3.3});
-  OPEN.push({g:new THREE.Group(),shells:storeSkin,cx:26,cz:-23,hw:10,hd:9,R:60,op:false,top:4.3});
+  { const e={g:new THREE.Group(),shells:dispSkin,cx:0,cz:-3.25,hw:9,hd:9.75,R:60,op:false,top:3.3}; const r=keepRoof(-9,9,-13,6.5,3.3,new THREE.Color(0x9E7B52).convertSRGBToLinear(),true); e.roof=r.g; e.roofMats=r.mats; e.roofMeshes=r.meshes; OPEN.push(e); }
+  { const e={g:new THREE.Group(),shells:storeSkin,cx:26,cz:-23,hw:10,hd:9,R:60,op:false,top:4.3}; const r=keepRoof(16,36,-32,-14,4.2,new THREE.Color(0xB89A6E).convertSRGBToLinear(),true); e.roof=r.g; e.roofMats=r.mats; e.roofMeshes=r.meshes; OPEN.push(e); }
   { const doorS=entrance; const fake={userData:{box:[16,36,-32,-14]}}; doorS(fake,"z1",26,2.6); doorS(fake,"x1",-16.2,2.4); storeSkin.push(...fake.userData.extra); }
+  if(ENT) ENT.build(scene);
   /* street furniture */
   { const pole=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.06,0.08,4.6,8),M(0x4A5652,{metalness:.4,roughness:.5}),40), lamp=new THREE.InstancedMesh(new THREE.BoxGeometry(0.5,0.12,0.24),M(0xFFF6D8,{emissive:0x6B5E30,emissiveIntensity:.6}),40); let n=0;
     for(let x=-50;x<=200&&n<40;x+=14){ if(Math.abs(x-170)<6||Math.abs(x)<7) continue; mtx.compose(new THREE.Vector3(x,2.3,26.9),q,new THREE.Vector3(1,1,1)); pole.setMatrixAt(n,mtx); mtx.compose(new THREE.Vector3(x,4.6,26.6),q,new THREE.Vector3(1,1,1)); lamp.setMatrixAt(n,mtx); n++; }
@@ -11232,7 +11352,8 @@ function initScene(){
       else if(ACAM) near=ins(ACAM.t.x,ACAM.t.z,0.3)||ins(ACAM.S.x,ACAM.S.z,0.1);
       else if(pinSets) near=cur.r<o.R&&ins(cur.t.x,cur.t.z,16);
       else near=cur.r<30&&ins(cur.t.x,cur.t.z,0.5);
-      const op=forceOpen||near; if(op!==o.op){ o.op=op; o.g.visible=op; o.shells.forEach(m=>{ m.visible=!op; (m.userData.extra||[]).forEach(e=>e.visible=!op); }); } }
+      const op=forceOpen||near; if(op!==o.op){ o.op=op; o.g.visible=op; o.shells.forEach(m=>{ m.visible=!op; (m.userData.extra||[]).forEach(e=>e.visible=!op); });
+        if(o.roofMats){ for(const mm of o.roofMats){ mm.transparent=op; mm.opacity=op?0.32:1; mm.depthWrite=!op; } if(o.roofMeshes) for(const mm of o.roofMeshes) mm.castShadow=!op; } } }
     if(PHYS){ try{ physStep(dt); }catch(e){ console.warn("physics stopped",e); PHYS=null; } }
     if(playerMode&&!follow&&PL) playerStep(dt,now/1000);
     if(follow){ const t=road.getTangentAt(Math.min(0.999,D?D.d/RL:0)); const tp=truck.position;
@@ -11303,5 +11424,4 @@ fontsReady.catch(()=>{}).then(()=>loadCharModel()).then(g=>{ window.CHARGLTF=g; 
   if(wantWorld){ wantWorld=false; toWorld(); } });
 })();
 </script>
-
 </body></html>
